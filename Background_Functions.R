@@ -4,7 +4,7 @@
 ## c.17/02/2021/ m.16/3/2021
 
 ## 'GGM_search' Functions: Performs model search to extract
-## a GGM Network model, given a specified sample (Kan et. al, 2020) 
+## a GGM Network model, given a specified sample (Kan et al, 2020) 
 GGM_search <- function(dat,
                        from = c("US", "GER", "HUN"),
                        alpha_prune = 0.01, fast = TRUE) {
@@ -105,13 +105,13 @@ Decomp <- function(simout, fitMeasures){
                          function(skiptheque) skiptheque@fitmeasures[[m]])
                 }, simplify = F)
   # Transform it to data.frame
-  tmp <- do.call(rbind, 
-                 Map(data.frame, df = tmp$df, chisq = tmp$chisq, 
-                     pvalue = tmp$pvalue, rmsea = tmp$rmsea, 
-                     cfi = tmp$cfi, tli = tmp$tli, 
-                     aic = tmp$aic, bic = tmp$bic))
-  # Create an empty  list to decompose the fit measures and store them as dataframes
+  tmp <- do.call(rbind, Map(data.frame, df = tmp$df, chisq = tmp$chisq, 
+                            pvalue = tmp$pvalue, rmsea = tmp$rmsea, 
+                            cfi = tmp$cfi, tli = tmp$tli, 
+                            aic = tmp$aic, bic = tmp$bic))
+  # Create an empty list
   stat <- list()
+  # Decompose the output and store the fit measures in data frames
   # For True Model = HF
   stat$trueHF$fitHF <- tmp[seq(1, nrow(tmp) - 2, by = 3), seq(1, ncol(tmp) - 2, by = 3)]
   stat$trueHF$fitBF <- tmp[seq(2, nrow(tmp) - 1, by = 3), seq(1, ncol(tmp) - 2, by = 3)]
@@ -126,6 +126,9 @@ Decomp <- function(simout, fitMeasures){
   stat$trueNW$fitNW <- tmp[seq(3, nrow(tmp)    , by = 3), seq(3, ncol(tmp)    , by = 3)]
   # Give as rownames the Number of Replication
   stat <- lapply(stat, lapply, "rownames<-", paste("Rep", 1:nrep, sep=""))
+  # define the colnames more clear. !NOTE: follows the order of the Map function above!
+  stat <- lapply(stat, lapply, "colnames<-", c("df", "chisq", "p_chisq", "RMSEA", 
+                                               "CFI", "TLI", "AIC", "BIC"))
   return(stat)
 }
 
