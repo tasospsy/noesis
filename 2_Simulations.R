@@ -4,7 +4,6 @@
 ## c.15/3/2021
 
 # ---- required sources
-source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/Background_Functions.R"))
 source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/1_Preparation.R"))
 
 ## -- Data generation procedure
