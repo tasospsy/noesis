@@ -9,7 +9,7 @@ library(qgraph)
 library(MASS)
 library(dplyr)
 # ---- required sources
-source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/BACKGROUND_FUNCTIONS.R"))
+source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/Background_Functions.R"))
 
 # ---- load data 
 load(url("https://github.com/tasospsy/noesis/blob/main/WAIS_US.Rdata?raw=true"))
