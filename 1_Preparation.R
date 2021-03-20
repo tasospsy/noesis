@@ -3,12 +3,12 @@
 ## PREPARATION
 ## c.6/12/2020 / m.20/3/2021
 
+# ---- required sources
+source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/Background_Functions.R"))
+
 # ---- Load Packages
 required.pckgs <- c("psychonetrics", "qgraph", "MASS", "dplyr", "GPArotation", "ucminf")
 installpackages(required.pckgs)
-
-# ---- required sources
-source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/Background_Functions.R"))
 
 # ---- load data 
 load(url("https://github.com/tasospsy/noesis/blob/main/WAIS_US.Rdata?raw=true"))
