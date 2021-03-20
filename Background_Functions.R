@@ -106,7 +106,7 @@ GetCorMat <- function(x){
 # ___________________________________________________________
 
 
-Decomp2 <- function(output, extract = c("fitmeasures", "parameters", "fit", "compare")){
+Decomp2 <- function(output, extract = c("fitmeasures", "parameters", "modelmatrices")){
    
   if(extract == "fitmeasures") io <-  apply(do.call(rbind,lapply(output, sapply, lapply, function(q) q@fitmeasures)),2, rbind) #dyo
   if(extract == "parameters") io <-apply(do.call(rbind,lapply(output, sapply, lapply, function(q) q@parameters)),2, rbind) #dyo
