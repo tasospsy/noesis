@@ -1,7 +1,7 @@
 ## Internship project
 ## Tasos Psychogyiopoulos
 ## BACKGROUND_FUNCTIONS
-## c.17/02/2021/ m.20/3/2021
+## c.17/02/2021/ m.04/04/2021
 
 
 ## Install packages Function (from the internet)
@@ -108,22 +108,78 @@ GetCorMat <- function(x){
 
 Decomp2 <- function(output, extract = c("fitmeasures", "parameters", "modelmatrices")){
    
-  if(extract == "fitmeasures") io <-  apply(do.call(rbind,lapply(output, sapply, lapply, function(q) q@fitmeasures)),2, rbind) #dyo
-  if(extract == "parameters") io <-apply(do.call(rbind,lapply(output, sapply, lapply, function(q) q@parameters)),2, rbind) #dyo
-  if(extract == "modelmatrices") io <-apply(do.call(rbind,lapply(output, sapply, lapply, function(q) q@modelmatrices)),2, rbind) #dyo
-   
-  o <- list()
-  o$trueHF$fitHF <- as.data.frame(do.call(rbind, io$HF[,seq(1, length(io$HF)-2, 3)])) 
-  o$trueHF$fitBF <- as.data.frame(do.call(rbind, io$HF[,seq(2, length(io$HF)-1, 3)]))
-  o$trueHF$fitNW <- as.data.frame(do.call(rbind, io$HF[,seq(3, length(io$HF)  , 3)]))
-  o$trueBF$fitHF <- as.data.frame(do.call(rbind, io$BF[,seq(1, length(io$BF)-2, 3)]))
-  o$trueBF$fitBF <- as.data.frame(do.call(rbind, io$BF[,seq(2, length(io$BF)-1, 3)]))
-  o$trueBF$fitNW <- as.data.frame(do.call(rbind, io$BF[,seq(3, length(io$BF)  , 3)]))
-  o$trueNW$fitHF <- as.data.frame(do.call(rbind, io$NW[,seq(1, length(io$NW)-2, 3)]))
-  o$trueNW$fitBF <- as.data.frame(do.call(rbind, io$NW[,seq(2, length(io$NW)-1, 3)]))
-  o$trueNW$fitNW <- as.data.frame(do.call(rbind, io$NW[,seq(3, length(io$NW)  , 3)]))
-  o <- lapply(o, lapply, 'rownames<-', NULL) %>%
-    lapply(lapply,lapply,as.numeric)
-  return(o)
+  if(extract == "fitmeasures") {
+    io <-  apply(do.call(rbind,lapply(output, sapply, lapply, function(q) q@fitmeasures)),2, rbind) 
+    o <- list()
+    o$trueHF$fitHF <- as.data.frame(do.call(rbind, io$HF[,seq(1, length(io$HF) -2, 3)])) 
+    o$trueHF$fitBF <- as.data.frame(do.call(rbind, io$HF[,seq(2, length(io$HF) -1, 3)]))
+    o$trueHF$fitNW <- as.data.frame(do.call(rbind, io$HF[,seq(3, length(io$HF)   , 3)]))
+    o$trueBF$fitHF <- as.data.frame(do.call(rbind, io$BF[,seq(1, length(io$BF) -2, 3)]))
+    o$trueBF$fitBF <- as.data.frame(do.call(rbind, io$BF[,seq(2, length(io$BF) -1, 3)]))
+    o$trueBF$fitNW <- as.data.frame(do.call(rbind, io$BF[,seq(3, length(io$BF)   , 3)]))
+    o$trueNW$fitHF <- as.data.frame(do.call(rbind, io$NW[,seq(1, length(io$NW) -2, 3)]))
+    o$trueNW$fitBF <- as.data.frame(do.call(rbind, io$NW[,seq(2, length(io$NW) -1, 3)]))
+    o$trueNW$fitNW <- as.data.frame(do.call(rbind, io$NW[,seq(3, length(io$NW)   , 3)]))
+    o <- lapply(o, lapply, 'rownames<-', NULL) %>%
+      lapply(lapply,lapply,as.numeric)
+    return(o)
+  }
+  
+  if(extract == "parameters") {
+    io <-apply(do.call(rbind,lapply(output, sapply, lapply, function(q) q@parameters)),2, rbind)
+    return(io)
+  } 
+  if(extract == "modelmatrices") {
+    io <-apply(do.call(rbind,lapply(output, sapply, lapply, function(q) q@modelmatrices)),2, rbind)
+    return(io)
+  }
 }
 
+# ___________________________________________________________
+
+TableL <- function(index, 
+                   list = hoi, 
+                   Min = FALSE,
+                   truemodel = c('HF', 'BF', 'NW'),
+                   compare_models = c('HFvsBF', 'HFvsNW', 'BFvsNW', 'ALL')){
+  
+  if(truemodel == 'HF'){
+    st1 <- lapply(list, sapply, function(.) .[[index]])$trueHF
+  }
+  if(truemodel == 'BF'){
+    st1 <- lapply(list, sapply, function(.) .[[index]])$trueBF
+  }
+  if(truemodel == 'NW'){
+    st1 <- lapply(list, sapply, function(.) .[[index]])$trueNW
+  }
+  if(truemodel == 'ALL') {
+    st1 <- lapply(list, sapply, function(.) .[[index]])
+  }
+  if(truemodel == 'ALL' && compare_models == 'ALL'){
+    st2 <- sapply (st1, function(.)
+      apply(., 1, function(.)
+        ifelse(Min, which.min(.), which.max(.))) %>%
+        table)
+  } 
+  if(compare_models == 'ALL' && !compare_models =='ALL'){
+    st2 <-  apply(st1, 1, function(.)
+      ifelse(1==1, which.min(.), which.max(.))) %>%
+      tabulate
+  } 
+  if(compare_models == 'HFvsBF'){
+    st2 <-  apply(st1[ ,1:2], 1, function(.)
+      ifelse(Min, which.min(.), which.max(.))) %>%
+      table
+  } 
+  if(compare_models == 'HFvsNW'){
+    st2 <-  apply(st1[ ,c(1,3)], 1, function(.)
+      ifelse(Min, which.min(.), which.max(.))) %>%
+      table
+  } 
+  if(compare_models == 'BFvsNW'){
+    st2 <-  apply(st1[ ,2:3], 1, function(.)
+      ifelse(Min, which.min(.), which.max(.))) %>%
+      table
+  } 
+  return(st2)
+}
