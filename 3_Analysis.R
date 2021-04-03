@@ -1,7 +1,7 @@
 ## Internship project
 ## Tasos Psychogyiopoulos
 ## DRAFT - ANALYSIS
-## c.17/02/2021 / m.31/3/2021
+## c.17/02/2021 / m.04/04/2021
 
 # ---- required sources
 source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/1_Preparation.R"))
@@ -23,39 +23,24 @@ histfun <- function(index){
     }
   }
 }
-indices <- c('chisq', 'pvalue', 'rmsea', 'tli', 'cfi','nfi', 'bic','aic.ll')
+indices <- c('chisq', 'pvalue', 'rmsea', 'tli', 'cfi','nfi', 'bic','aic.ll') #
 sapply(indices, histfun) %>% invisible
 
 # Test: Do fit Indices pick the right model?
-TableZ <- function(index, list = hoi, Min = FALSE){
-  st <- lapply(list, sapply, function(.) .[[index]]) %>%
-    sapply (., function(.)
-      apply(., 1, function(.)
-        ifelse(Min, which.min(.), which.max(.))) %>%
-        table)
-}
-
-(rmsea_test <- TableZ(index = 'rmsea' , Min = TRUE) )
-(bic_test   <- TableZ(index = 'bic'   , Min = TRUE) )
-(aic_test   <- TableZ(index = 'aic.ll', Min = TRUE) )
-(tli_test   <- TableZ(index = 'tli'   , Min = FALSE))
-(cfi_test   <- TableZ(index = 'cfi'   , Min = FALSE))
-(nfi_test   <- TableZ(index = 'nfi'   , Min = FALSE))
+(rmsea_test <- TableL(index = 'rmsea' , Min = TRUE,  truemodel = 'ALL', compare_models = 'ALL'))
+(bic_test   <- TableL(index = 'bic'   , Min = TRUE,  truemodel = 'ALL', compare_models = 'ALL'))
+(aic_test   <- TableL(index = 'aic.ll', Min = TRUE,  truemodel = 'ALL', compare_models = 'ALL'))
+(tli_test   <- TableL(index = 'tli'   , Min = FALSE, truemodel = 'ALL', compare_models = 'ALL'))
+(cfi_test   <- TableL(index = 'cfi'   , Min = FALSE, truemodel = 'ALL', compare_models = 'ALL'))
+(nfi_test   <- TableL(index = 'nfi'   , Min = FALSE, truemodel = 'ALL', compare_models = 'ALL'))
 
 # Hypothesis: HF VS BF, if NW is the true model
-TableH <- function(index, list = hoi, Min = FALSE){
-  st <- lapply(list, sapply, function(q) q[[index]])$trueNW[ ,1:2] %>%
-      apply(., 1, function(.)
-        ifelse(Min, which.min(.), which.max(.))) %>%
-        table
-}
-
-(rmsea_hypo <- TableH(index = 'rmsea' , Min = TRUE) )
-(bic_hypo   <- TableH(index = 'bic'   , Min = TRUE) )
-(aic_hypo   <- TableH(index = 'aic.ll', Min = TRUE) )
-(tli_hypo   <- TableH(index = 'tli'   , Min = FALSE))
-(cfi_hypo   <- TableH(index = 'cfi'   , Min = FALSE))
-(nfi_hypo   <- TableH(index = 'nfi'   , Min = FALSE))
+(rmsea_hypo <- TableL(index = 'rmsea' , Min = TRUE,  truemodel = 'NW', compare_models = 'HFvsBF'))
+(bic_hypo   <- TableL(index = 'bic'   , Min = TRUE,  truemodel = 'NW', compare_models = 'HFvsBF'))
+(aic_hypo   <- TableL(index = 'aic.ll', Min = TRUE,  truemodel = 'NW', compare_models = 'HFvsBF'))
+(tli_hypo   <- TableL(index = 'tli'   , Min = FALSE, truemodel = 'NW', compare_models = 'HFvsBF'))
+(cfi_hypo   <- TableL(index = 'cfi'   , Min = FALSE, truemodel = 'NW', compare_models = 'HFvsBF'))
+(nfi_hypo   <- TableL(index = 'nfi'   , Min = FALSE, truemodel = 'NW', compare_models = 'HFvsBF'))
 
 # Model Comparison HF Vs BF
 # ABSOLUTE FIT: 
@@ -65,12 +50,10 @@ Dchisq <- lapply(hoi, sapply, function(.) .[['chisq']]) %>%
 Ddf   <- lapply(hoi, sapply, function(.) .[['df']]) %>%
   lapply(., function(.).[ ,1] - .[,2]) %>%
   lapply(., median)
-Dpchisq   <- lapply(hoi, sapply, function(.) .[['pvalue']]) %>%
-  lapply(., function(.).[ ,1] - .[,2]) %>%
-  lapply(., hist)
 
-# APPROXIMATE FIT
+# DIORTHWSE TO !
+## Dpchisq   <- lapply(hoi, sapply, function(.) .[['pvalue']]) %>%
+##   lapply(., function(.).[ ,1] - .[,2]) %>%
+##   lapply(., hist)
 
 
-
- 
