@@ -41,10 +41,8 @@ endt <- Sys.time()
 endt-startt
 #  save(out, file = "out.Rda")
 
-## Here: ... New package to upload big files in github.
 
 # NOTE:
 # Time difference of 53.93103 mins
-# We can use 'mcmapply' and 'mclapply' instead of 'mapply' and 'lapply'
-# for parallel computing using multiple cores at once. 
+
 
