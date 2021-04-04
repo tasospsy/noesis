@@ -6,13 +6,9 @@
 # ---- required sources
 source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/1_Preparation.R"))
 
-load("out.Rda") 
-## 
+##  load("out.Rda") 
 hoi <- Decomp2(output = out, extract = "fitmeasures")
-## Example Structure: hoi$trueHF$fitHF[['chisq']]
-
-## Set Graphics parameter 3x3
-par(mfrow=c(3,3))
+## Example Structure: hoi$trueHF$fitHF$chisq
 
 # Check histograms
 histfun <- function(index){
@@ -23,7 +19,9 @@ histfun <- function(index){
     }
   }
 }
-indices <- c('chisq', 'pvalue', 'rmsea', 'tli', 'cfi','nfi', 'bic','aic.ll') #
+indices <- c('chisq', 'pvalue', 'rmsea', 'tli', 'cfi','nfi', 'bic','aic.ll') 
+## Set Graphics parameter 3x3
+par(mfrow=c(3,3))
 sapply(indices, histfun) %>% invisible
 
 # Test: Do fit Indices pick the right model?
@@ -71,3 +69,4 @@ sapply(indices[1:6], HistBox, truemodel = 'trueBF', fit = 'fitBF') %>% invisible
 sapply(indices[1:6], HistBox, truemodel = 'trueNW', fit = 'fitBF') %>% invisible
 
 # graphics.off()
+
