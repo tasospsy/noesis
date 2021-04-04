@@ -61,7 +61,8 @@ Ddf   <- lapply(hoi, sapply, function(.) .[['df']]) %>%
 HistBox <- function(index, truemodel = c('trueHF', 'trueBF', 'trueNW'),
                     fit = c('fitHF', 'fitBF', 'fitNW')) {
   boxplot(hoi[[truemodel]][[fit]][[index]] ,horizontal=TRUE, frame=FALSE, axes = FALSE )
-  text(x = boxplot.stats(hoi[[truemodel]][[fit]][[index]])$stats[3], labels = round(boxplot.stats(hoi[[truemodel]][[fit]][[index]])$stats[3] ,4), y = 1.25)
+  text(x = boxplot.stats(hoi[[truemodel]][[fit]][[index]])$stats[3], 
+       labels = round(boxplot.stats(hoi[[truemodel]][[fit]][[index]])$stats[3] ,4), y = 1.25)
   hist(hoi[[truemodel]][[fit]][[index]]  , border=FALSE  , main= paste(truemodel,fit) , xlab=index)
 }
 # Graphics layout
