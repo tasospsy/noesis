@@ -163,7 +163,7 @@ TableL <- function(index,
   } 
   if(compare_models == 'ALL' && !compare_models =='ALL'){
     st2 <-  apply(st1, 1, function(.)
-      ifelse(1==1, which.min(.), which.max(.))) %>%
+      ifelse(Min, which.min(.), which.max(.))) %>%
       tabulate
   } 
   if(compare_models == 'HFvsBF'){
