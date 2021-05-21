@@ -1,39 +1,48 @@
-
-# Draft
+## Internship project
+## Tasos Psychogyiopoulos
+## 4. VISUALIZATION (draft)
+## c. 10/5/2021
 source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/3_Analysis.R"))
 library(tidyverse)
 
+## setwd("/Users/tasospsy/Google Drive/_UvA/Research Internship/Noesis/")
+## load('out.rda')
+
 ## "Tidy" the simulation results
+
+# Selected fit measures for this study
+fitmeasures <- c("chisq", "df", "pvalue", "rmsea", "aic.ll", "bic", "cfi", "tli", "nfi")
 
 ## TRUE HF - FIT HF
 HFHF <-  hoi$trueHF$fitHF %>% as_tibble() %>% 
-  dplyr::select(chisq, df, pvalue, rmsea, aic.ll, bic, cfi, tli, nfi)
+  dplyr::select(all_of(fitmeasures))
 ## TRUE HF - FIT BF
 HFBF <-  hoi$trueHF$fitBF %>% as_tibble() %>% 
-  dplyr::select(chisq, df, pvalue, rmsea, aic.ll, bic, cfi, tli, nfi)  
+  dplyr::select(all_of(fitmeasures))  
 ## TRUE HF - FIT NW
 HFNW <-  hoi$trueHF$fitNW %>% as_tibble() %>% 
-  dplyr::select(chisq, df, pvalue, rmsea, aic.ll, bic, cfi, tli, nfi) 
+  dplyr::select(all_of(fitmeasures)) 
 
 ## TRUE BF - FIT HF
 BFHF <-  hoi$trueBF$fitHF %>% as_tibble() %>% 
-  dplyr::select(chisq, df, pvalue, rmsea, aic.ll, bic, cfi, tli, nfi)
+  dplyr::select(all_of(fitmeasures))
 ## TRUE BF - FIT BF
 BFBF <-  hoi$trueBF$fitBF %>% as_tibble() %>% 
-  dplyr::select(chisq, df, pvalue, rmsea, aic.ll, bic, cfi, tli, nfi)  
+  dplyr::select(all_of(fitmeasures))  
 ## TRUE BF - FIT NW
 BFNW <-  hoi$trueBF$fitNW %>% as_tibble() %>% 
-  dplyr::select(chisq, df, pvalue, rmsea, aic.ll, bic, cfi, tli, nfi)
+  dplyr::select(all_of(fitmeasures))
 
 ## TRUE NW - FIT HF
 NWHF <-  hoi$trueNW$fitHF %>% as_tibble() %>% 
-  dplyr::select(chisq, df, pvalue, rmsea, aic.ll, bic, cfi, tli, nfi)
+  dplyr::select(all_of(fitmeasures))
 ## TRUE NW - FIT BF
 NWBF <-  hoi$trueNW$fitBF %>% as_tibble() %>% 
-  dplyr::select(chisq, df, pvalue, rmsea, aic.ll, bic, cfi, tli, nfi)  
+  dplyr::select(all_of(fitmeasures))  
 ## TRUE NW - FIT NW
 NWNW <-  hoi$trueNW$fitNW %>% as_tibble() %>% 
-  dplyr::select(chisq, df, pvalue, rmsea, aic.ll, bic, cfi, tli, nfi)
+  dplyr::select(all_of(fitmeasures))
+
 
 # 1st plot: FITTING BI-FACTOR MODELS
 
