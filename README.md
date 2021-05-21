@@ -13,8 +13,10 @@ The results of our simulation study show that the network theory of intelligence
 _noun_
 (no·​e·​sis | \ nōˈēsə̇s)
 plural -es
+
 Definition:
-1: purely intellectual apprehension:
+
+1. purely intellectual apprehension:
 + Platonism : the highest kind of knowledge or knowledge of the eternal forms or ideas —contrasted with dianoia
 + in Husserl : the subjective aspect of or the act in an intentional experience —distinguished from noema
-2: cognition especially when occurring through direct knowledge
+2. cognition especially when occurring through direct knowledge
