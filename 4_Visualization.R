@@ -43,6 +43,7 @@ BFBF1 <-  BFBF %>%
   rename(χ2 = chisq, RMSEA = rmsea, CFI = cfi, p_value = pvalue,
          TLI = tli, NFI = nfi)
 
+# Calculating summary statistics to put them on plots
 SumBFBF <- BFBF1 %>% 
   dplyr::select(RMSEA, CFI, TLI, NFI) %>% 
   gather() %>% 
@@ -50,7 +51,7 @@ SumBFBF <- BFBF1 %>%
   summarize(medianBFBF = median(value), meanBFBF = mean(value)) %>% 
   mutate(lab = paste("median = ", round(medianBFBF,4), "\nmean =", round(meanBFBF,4))
          )
-
+# Histogram Plot - TrueBF/FitBF
 BFBF_hists <- BFBF1 %>% gather() %>% 
   ggplot(aes(x= value)) + 
   geom_histogram(bins = 15, show.legend = FALSE, fill = "coral", color = "white", alpha = 0.8) + 
@@ -68,6 +69,7 @@ NWBF1 <-  NWBF %>%
   dplyr::select(chisq, rmsea, cfi, pvalue, tli, nfi) %>% 
   rename(χ2 = chisq, RMSEA = rmsea, CFI = cfi, p_value = pvalue,
          TLI = tli, NFI = nfi)
+# Summary statistics
 SumNWBF <- NWBF1 %>% 
   dplyr::select(RMSEA, CFI, TLI, NFI) %>% 
   gather() %>% 
@@ -76,6 +78,8 @@ SumNWBF <- NWBF1 %>%
   mutate(lab = paste("median = ", round(medianNWBF,4), 
                      "\nmean =", round(meanNWBF,4))
          )
+
+# Histogram Plot - TrueNW/FitBF
 NWBF_hists <- NWBF1 %>% gather() %>% 
   ggplot(aes(x= value)) + 
   geom_histogram(bins = 15, show.legend = FALSE, color = "white", fill = "deepskyblue", alpha = 0.6) + 
