@@ -49,24 +49,22 @@ Ddf   <- lapply(hoi, sapply, function(.) .[['df']]) %>%
   lapply(., function(.).[ ,1] - .[,2]) %>%
   lapply(., median)
 
-# DIORTHWSE TO !
-## Dpchisq   <- lapply(hoi, sapply, function(.) .[['pvalue']]) %>%
-##   lapply(., function(.).[ ,1] - .[,2]) %>%
-##   lapply(., hist)
 
-# VISUALIZATION
+# VISUALIZATION (see. part 4. Visualization)
+
+         ## Old code
 # Draw the boxplot and the histogram 
-HistBox <- function(index, truemodel = c('trueHF', 'trueBF', 'trueNW'),
-                    fit = c('fitHF', 'fitBF', 'fitNW')) {
-  boxplot(hoi[[truemodel]][[fit]][[index]] ,horizontal=TRUE, frame=FALSE, axes = FALSE )
-  text(x = boxplot.stats(hoi[[truemodel]][[fit]][[index]])$stats[3], 
-       labels = round(boxplot.stats(hoi[[truemodel]][[fit]][[index]])$stats[3] ,4), y = 1.25)
-  hist(hoi[[truemodel]][[fit]][[index]]  , border=FALSE  , main= paste(truemodel,fit) , xlab=index)
-}
-# Graphics layout
-par(mfcol = c(4,3), mar=c(4, 3.1, 1.1, 2.1))
-sapply(indices[1:6], HistBox, truemodel = 'trueBF', fit = 'fitBF') %>% invisible
-sapply(indices[1:6], HistBox, truemodel = 'trueNW', fit = 'fitBF') %>% invisible
+## HistBox <- function(index, truemodel = c('trueHF', 'trueBF', 'trueNW'),
+##                     fit = c('fitHF', 'fitBF', 'fitNW')) {
+##   boxplot(hoi[[truemodel]][[fit]][[index]] ,horizontal=TRUE, frame=FALSE, axes = FALSE )
+##   text(x = boxplot.stats(hoi[[truemodel]][[fit]][[index]])$stats[3], 
+##        labels = round(boxplot.stats(hoi[[truemodel]][[fit]][[index]])$stats[3] ,4), y = 1.25)
+##   hist(hoi[[truemodel]][[fit]][[index]]  , border=FALSE  , main= paste(truemodel,fit) , xlab=index)
+## }
+## # Graphics layout
+## par(mfcol = c(4,3), mar=c(4, 3.1, 1.1, 2.1))
+## sapply(indices[1:6], HistBox, truemodel = 'trueBF', fit = 'fitBF') %>% invisible
+## sapply(indices[1:6], HistBox, truemodel = 'trueNW', fit = 'fitBF') %>% invisible
 
 # graphics.off()
 
