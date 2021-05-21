@@ -6,3 +6,15 @@ The field of human general intelligence has produced many findings that are robu
 Our explanation is inspired by the mutualism model of intelligence, which is a network theory of intelligence. By Monte-Carlo simulations using the R package psychonetrics, we demonstrate that if a network model of intelligence is the true underlying data mechanism, fitting a bifactor model shows (1) poor absolute fit, but (2) good approximate fit, and (3) better relative fit than the higher-order factor model, which in itself may show acceptable approximate fit, but poor absolute fit. All these results are in line with the empirical literature on bifactor models for general intelligence. We also show that, if a bifactor model were the underlying data generating mechanism, much better absolute fit measures are expected than the absolute fit measures reported in the empirical literature.
 
 The results of our simulation study show that the network theory of intelligence provides a theoretical plausible explanation as to why bifactor models tend to outperform higher-order factor models for general intelligence.
+
+
+***
+> noesis
+_noun_
+(no·​e·​sis | \ nōˈēsə̇s)
+plural -es
+Definition:
+1: purely intellectual apprehension:
++ Platonism : the highest kind of knowledge or knowledge of the eternal forms or ideas —contrasted with dianoia
++ in Husserl : the subjective aspect of or the act in an intentional experience —distinguished from noema
+2: cognition especially when occurring through direct knowledge
