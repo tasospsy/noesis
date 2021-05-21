@@ -26,6 +26,8 @@ sapply(indices, histfun) %>% invisible
 
 # Test: Do fit Indices pick the right model?
 ## For 'TableL' function see, 'background_Funcions.R'
+## UPDATE: see, '4_VISUALIZATIONS' for and updated table.
+
 (rmsea_test <- TableL(index = 'rmsea' , Min = TRUE,  truemodel = 'ALL', compare_models = 'ALL'))
 (bic_test   <- TableL(index = 'bic'   , Min = TRUE,  truemodel = 'ALL', compare_models = 'ALL'))
 (aic_test   <- TableL(index = 'aic.ll', Min = TRUE,  truemodel = 'ALL', compare_models = 'ALL'))
