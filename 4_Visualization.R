@@ -5,6 +5,7 @@
 
 source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/3_Analysis.R"))
 library(tidyverse)
+library(patchwork)
 
 ## setwd("/Users/tasospsy/Google Drive/_UvA/Research Internship/Noesis/")
 ## load('out.rda')
@@ -19,55 +20,55 @@ comp.criteria    <-  c("aic.ll", "bic")
 ## TRUE HF - FIT HF
 HFHF <-  hoi$trueHF$fitHF %>% as_tibble() %>% 
   add_column(FitModel = "Higher-order factor") %>% 
-  rownames_to_column("_Rep")
+  rownames_to_column("Rep")
 ## TRUE HF - FIT BF
 HFBF <-  hoi$trueHF$fitBF %>% as_tibble() %>% 
   add_column(FitModel = "Bi-factor") %>% 
-  rownames_to_column("_Rep")
+  rownames_to_column("Rep")
 ## TRUE HF - FIT NW
 HFNW <-  hoi$trueHF$fitNW %>% as_tibble()%>% 
   add_column(FitModel = "Network")%>% 
-  rownames_to_column("_Rep")
+  rownames_to_column("Rep")
 ## merge
 data1 <- bind_rows(HFHF, HFBF, HFNW) %>% 
   dplyr::select(all_of(c(exact.fit, approx.fit, comp.criteria)),
-                FitModel, `_Rep`) %>% 
+                FitModel, Rep) %>% 
   add_column(TrueModel = "Higher-order factor") 
 
 ## TRUE BF - FIT HF
 BFHF <-  hoi$trueBF$fitHF %>% as_tibble() %>% 
   add_column(FitModel = "Higher-order factor") %>% 
-  rownames_to_column("_Rep")
+  rownames_to_column("Rep")
 ## TRUE BF - FIT BF
 BFBF <-  hoi$trueBF$fitBF %>% as_tibble() %>% 
   add_column(FitModel = "Bi-factor") %>% 
-  rownames_to_column("_Rep")
+  rownames_to_column("Rep")
 ## TRUE BF - FIT NW
 BFNW <-  hoi$trueBF$fitNW %>% as_tibble()%>% 
   add_column(FitModel = "Network") %>% 
-  rownames_to_column("_Rep")
+  rownames_to_column("Rep")
 ## merge
 data2 <- bind_rows(BFHF, BFBF, BFNW) %>% 
   dplyr::select(all_of(c(exact.fit, approx.fit, comp.criteria)),
-                FitModel, `_Rep`) %>% 
+                FitModel, Rep) %>% 
   add_column(TrueModel = "Bi-factor") 
 
 ## TRUE NW - FIT HF
 NWHF <-  hoi$trueNW$fitHF %>% as_tibble() %>% 
   add_column(FitModel = "Higher-order factor") %>% 
-  rownames_to_column("_Rep")
+  rownames_to_column("Rep")
 ## TRUE NW - FIT BF
 NWBF <-  hoi$trueNW$fitBF %>% as_tibble() %>% 
   add_column(FitModel = "Bi-factor") %>% 
-  rownames_to_column("_Rep")
+  rownames_to_column("Rep")
 ## TRUE NW - FIT NW
 NWNW <-  hoi$trueNW$fitNW %>% as_tibble()%>% 
   add_column(FitModel = "Network") %>% 
-  rownames_to_column("_Rep")
+  rownames_to_column("Rep")
 ## merge
 data3 <- bind_rows(NWHF, NWBF, NWNW) %>% 
   dplyr::select(all_of(c(exact.fit, approx.fit, comp.criteria)),
-                FitModel, `_Rep`) %>% 
+                FitModel, Rep) %>% 
   add_column(TrueModel = "Network") 
 
 # merge all datasets
@@ -132,178 +133,181 @@ ggcuc <- gather(Cucina) %>%
   
 ggcuc
 
-## TABLE VISUALIZATION CHECK 
+## -- VISUALIZATION CHECK: DO FIT INDICES PICK THE RIGHT MODEL?  
+
 ## TRUE MODEL: HF
 
-## TRUE HF - FIT HF
-HFHFf <- HFHF %>% 
-  dplyr::select(chisq, df, rmsea, aic.ll, bic, cfi, tli, nfi) %>% 
-  add_column(FitModel = "Higher-Order factor") %>% 
-  rownames_to_column("Rep")
-## TRUE HF - FIT BF
-HFBFf <-  HFBF %>% 
-  dplyr::select(chisq, df, rmsea, aic.ll, bic, cfi, tli, nfi) %>% 
-  add_column(FitModel = "Bi-factor")%>% 
-  rownames_to_column("Rep")
-## TRUE HF - FIT NW
-HFNWf <-  HFNW %>% 
-  dplyr::select(chisq, df, rmsea, aic.ll, bic, cfi, tli, nfi) %>% 
-  add_column(FitModel = "Network")%>% 
-  rownames_to_column("Rep")
-
-## Comparison Hf Vs BF when the true model is HF
-Vs_all_true_HF <- bind_rows(HFHFf, HFBFf, HFNWf) %>% 
+all_true_HF <- alldat %>% 
+  filter(TrueModel == "Higher-order factor") %>% 
+  dplyr::select(RMSEA, CFI, TLI, NFI, AIC, BIC, Rep, FitModel) %>% 
   group_by(Rep) %>% 
-  summarize(RMSEA = FitModel[which.min(rmsea)],
-            AIC   = FitModel[which.min(aic.ll)],
-            BIC   = FitModel[which.min(bic)],
-            TLI   = FitModel[which.max(tli)],
-            CFI   = FitModel[which.max(cfi)],
-            NFI   = FitModel[which.max(nfi)]
-            )
+  summarize(RMSEA = FitModel[which.min(RMSEA)],
+            AIC   = FitModel[which.min(AIC)],
+            BIC   = FitModel[which.min(BIC)],
+            TLI   = FitModel[which.max(TLI)],
+            CFI   = FitModel[which.max(CFI)],
+            NFI   = FitModel[which.max(NFI)]
+            ) %>% 
+  ungroup()
 
-count_all_true_HF <- Vs_all_true_HF %>% 
+count_all_true_HF <- all_true_HF %>% 
   gather(key = "Chosen_Index", value = "Model", - Rep) %>% 
   group_by(Chosen_Index) %>% 
-  filter(Model == "Higher-Order factor") %>% 
+  filter(Model == "Higher-order factor") %>% 
   count(Model) %>% 
   mutate(per = n /10) 
 
-
 pie1 <- count_all_true_HF %>% 
-  ggplot(aes(x=per, y=Chosen_Index, fill= Chosen_Index))+
+  ggplot(aes(x=per, y=Chosen_Index, fill= Chosen_Index)) +
   geom_bar(width = 1, stat = "identity", color="white", show.legend = FALSE) +
-  coord_polar("x", start=0)+
-  geom_text(aes(label= paste0(Chosen_Index," ", per,  "%")), 
-            color = "black", size=3 ) +
+  coord_polar("x", start=0) +
+  geom_text(aes(label = paste0(Chosen_Index,":", per,  "%")), 
+            color = "grey15",size=3, family = "mono", hjust = 1) +
   theme_void() +
   scale_fill_brewer(palette = "Greens") +
-  labs(
-    title = "",
-    subtitle = "A. When the true model is \n Higher-Order Factor Model",
-    caption = "") +
-  theme(
-    plot.title = element_text(hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, color = "darkgreen", size = 11, face = "bold")
+  labs(title = "",
+       subtitle = "A. When the true model is \n Higher-Order Factor Model",
+       caption = "") +
+  theme(text = element_text(family = "mono"),
+        plot.subtitle = element_text(hjust = 0.5, color = "darkgreen", size = 12)
   )
 pie1
 
 ## TRUE MODEL: BF
-
-## TRUE BF - FIT HF
-BFHFf <-  BFHF %>% 
-  dplyr::select(chisq, df, rmsea, aic.ll, bic, cfi, tli, nfi) %>% 
-  add_column(FitModel = "Higher-Order factor") %>% 
-  rownames_to_column("Rep")
-## TRUE BF - FIT BF
-BFBFf <-  BFBF %>% 
-  dplyr::select(chisq, df, rmsea, aic.ll, bic, cfi, tli, nfi) %>% 
-  add_column(FitModel = "Bi-factor")%>% 
-  rownames_to_column("Rep")
-## TRUE BF - FIT NW
-BFNWf <- BFNW %>% 
-  dplyr::select(chisq, df, rmsea, aic.ll, bic, cfi, tli, nfi) %>% 
-  add_column(FitModel = "Network")%>% 
-  rownames_to_column("Rep")
-
-## Comparison Hf Vs BF when the true model is BF
-Vs_all_true_BF <- bind_rows(BFHFf, BFBFf, BFNWf) %>% 
+all_true_BF <- alldat %>% 
+  filter(TrueModel == "Bi-factor") %>% 
+  dplyr::select(RMSEA, CFI, TLI, NFI, AIC, BIC, Rep, FitModel) %>% 
   group_by(Rep) %>% 
-  summarize(RMSEA = FitModel[which.min(rmsea)],
-            AIC   = FitModel[which.min(aic.ll)],
-            BIC   = FitModel[which.min(bic)],
-            TLI   = FitModel[which.max(tli)],
-            CFI   = FitModel[which.max(cfi)],
-            NFI   = FitModel[which.max(nfi)]
-  )
+  summarize(RMSEA = FitModel[which.min(RMSEA)],
+            AIC   = FitModel[which.min(AIC)],
+            BIC   = FitModel[which.min(BIC)],
+            TLI   = FitModel[which.max(TLI)],
+            CFI   = FitModel[which.max(CFI)],
+            NFI   = FitModel[which.max(NFI)]
+  ) %>% 
+  ungroup()
 
-count_all_true_BF <- Vs_all_true_BF %>% 
+count_all_true_BF <- all_true_BF %>% 
   gather(key = "Chosen_Index", value = "Model", - Rep) %>% 
   group_by(Chosen_Index) %>% 
   filter(Model == "Bi-factor") %>% 
   count(Model) %>% 
   mutate(per = n /10) 
 
-
 pie2 <- count_all_true_BF %>% 
-  ggplot(aes(x=per, y=Chosen_Index, fill= Chosen_Index))+
+  ggplot(aes(x=per, y=Chosen_Index, fill= Chosen_Index)) +
   geom_bar(width = 1, stat = "identity", color="white", show.legend = FALSE) +
   coord_polar("x", start=0) +
-  geom_text(aes(label= paste0(Chosen_Index," ", per,  "%")), 
-            color = "black", size=3) +
+  geom_text(aes(label = paste0(Chosen_Index,":", per,  "%")), 
+            color = "grey15",size=3, family = "mono", hjust = 1) +
   theme_void() +
   scale_fill_brewer(palette = "Oranges") +
-  labs(
-    title = "",
-    subtitle = "B. When the true model is \n Bi-factor Model",
-    caption = "") +
-  theme(
-    plot.title = element_text(hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, color = "darkorange2", size = 11, face = "bold")
+  labs(title = "",
+       subtitle = "B. When the true model is \n Bi-factor Model",
+       caption = "") +
+  theme(text = element_text(family = "mono"),
+        plot.subtitle = element_text(hjust = 0.5, color = "darkorange2", size = 12)
   )
 pie2
 
+
 ## TRUE MODEL: NW
-
-## TRUE NW - FIT HF
-NWHFf <-  NWHF %>% 
-  dplyr::select(chisq, rmsea, aic.ll, bic, cfi, tli, nfi) %>% 
-  add_column(FitModel = "Higher-Order factor") %>% 
-  rownames_to_column("Rep")
-## TRUE NW - FIT BF
-NWBFf <-  NWBF %>% 
-  dplyr::select(chisq,rmsea, aic.ll, bic, cfi, tli, nfi) %>% 
-  add_column(FitModel = "Bi-factor")%>% 
-  rownames_to_column("Rep")
-## TRUE NW - FIT NW
-NWNWf <-  NWNW %>% 
-  dplyr::select(chisq,rmsea, aic.ll, bic, cfi, tli, nfi) %>% 
-  add_column(FitModel = "Network")%>% 
-  rownames_to_column("Rep")
-
-## Comparison Hf Vs BF when the true model is NW
-Vs_all_true_NW <- bind_rows(NWHFf, NWBFf, NWNWf) %>% 
+## TRUE MODEL: BF
+all_true_NW <- alldat %>% 
+  filter(TrueModel == "Network") %>% 
+  dplyr::select(RMSEA, CFI, TLI, NFI, AIC, BIC, Rep, FitModel) %>% 
   group_by(Rep) %>% 
-  summarize(RMSEA = FitModel[which.min(rmsea)],
-            AIC   = FitModel[which.min(aic.ll)],
-            BIC   = FitModel[which.min(bic)],
-            TLI   = FitModel[which.max(tli)],
-            CFI   = FitModel[which.max(cfi)],
-            NFI   = FitModel[which.max(nfi)]
-  )
+  summarize(RMSEA = FitModel[which.min(RMSEA)],
+            AIC   = FitModel[which.min(AIC)],
+            BIC   = FitModel[which.min(BIC)],
+            TLI   = FitModel[which.max(TLI)],
+            CFI   = FitModel[which.max(CFI)],
+            NFI   = FitModel[which.max(NFI)]
+  ) %>% 
+  ungroup()
 
-count_all_true_NW <- Vs_all_true_NW %>% 
+count_all_true_NW <- all_true_NW %>% 
   gather(key = "Chosen_Index", value = "Model", - Rep) %>% 
   group_by(Chosen_Index) %>% 
   filter(Model == "Network") %>% 
   count(Model) %>% 
   mutate(per = n /10) 
 
-
 pie3 <- count_all_true_NW %>% 
-  ggplot(aes(x=per, y=Chosen_Index, fill= Chosen_Index))+
+  ggplot(aes(x=per, y=Chosen_Index, fill= Chosen_Index)) +
   geom_bar(width = 1, stat = "identity", color="white", show.legend = FALSE) +
-  coord_polar("x", start=0)+
-  geom_text(aes(label= paste0(Chosen_Index," ", per,  "%")), 
-            color = "black", size=3, x = 100) +
+  coord_polar("x", start=0) +
+  geom_text(aes(label = paste0(Chosen_Index,":", per,  "%")), 
+            color = "grey15", size=3, family = "mono", hjust = 1) +
   theme_void() +
   scale_fill_brewer(palette = "Blues") +
-  labs(
-    title = "",
-    subtitle = "C. When the true model is \n Network Model",
-    caption = "") +
-  theme(
-    plot.title = element_text(hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5, color = "blue4", size = 11, face = "bold")
+  labs(title = "",
+       subtitle = "C. When the true model is \n Network Model",
+       caption = "") +
+  theme(text = element_text(family = "mono"),
+        plot.subtitle = element_text(hjust = 0.5, color = "blue4", size = 12)
   )
 pie3
 
 ## Final Plot with all 3 pies
-library(patchwork)
-finalpie <- pie1 + pie2 + pie3 + 
-  plot_annotation(title = "Do Fit Indices pick the right model?")
+
+finalpie <- pie1 + pie2 + pie3
 finalpie  
 
+
+# --
+## EXTRA PLOTS (DRAFT)
+
+## TRUE BF - FIT BF
+BFBF1 <-  BFBF %>% 
+  dplyr::select(chisq, rmsea, cfi, pvalue, tli, nfi) %>% 
+  rename(χ2 = chisq, RMSEA = rmsea, CFI = cfi, p_value = pvalue,
+          TLI = tli, NFI = nfi)
+
+SumBFBF <- BFBF1 %>% 
+  dplyr::select(RMSEA, CFI, TLI, NFI) %>% 
+  gather() %>% 
+  group_by(key) %>% 
+  summarize(medianBFBF = median(value), meanBFBF = mean(value)) %>% 
+  mutate(lab = paste("median = ", round(medianBFBF,4), "\nmean =", round(meanBFBF,4))
+  )
+
+BFBF_hists <- BFBF1 %>% gather() %>% 
+  ggplot(aes(x= value)) + 
+  geom_histogram(bins = 15, show.legend = FALSE, fill = "coral", color = "white", alpha = 0.8) + 
+  facet_wrap(~key, scales = 'free', ncol = 3)+
+  geom_text(data = SumBFBF, aes(label = lab), 
+            x=Inf, y=Inf, hjust=1, vjust=1, size=3) +
+  ggtitle("True model Bi-factor Model - Fitting Bi-factor Model")+
+  xlab("Fit Indices")+
+  ylab("") +
+  theme_minimal()
+BFBF_hists
+
+## TRUE NW - FIT BF
+NWBF1 <-  NWBF %>% 
+  dplyr::select(chisq, rmsea, cfi, pvalue, tli, nfi) %>% 
+  rename(χ2 = chisq, RMSEA = rmsea, CFI = cfi, p_value = pvalue,
+          TLI = tli, NFI = nfi)
+SumNWBF <- NWBF1 %>% 
+  dplyr::select(RMSEA, CFI, TLI, NFI) %>% 
+  gather() %>% 
+  group_by(key) %>% 
+  summarize(medianNWBF = median(value), meanNWBF = mean(value)) %>% 
+  mutate(lab = paste("median = ", round(medianNWBF,4), 
+                     "\nmean =", round(meanNWBF,4))
+  )
+NWBF_hists <- NWBF1 %>% gather() %>% 
+  ggplot(aes(x= value)) + 
+  geom_histogram(bins = 15, show.legend = FALSE, color = "white", fill = "deepskyblue", alpha = 0.6) + 
+  facet_wrap(~key, scales = 'free', ncol = 3) +
+  geom_text(data = SumNWBF, aes(label = lab), 
+            x=Inf, y=Inf, hjust=1, vjust=1, size=3) +
+  ggtitle("True model Network Model - Fitting Bi-factor Model")+
+  xlab("Fit Indices") +
+  ylab("") +
+  theme_minimal()
+NWBF_hists
 ## WAFFLE CHARTS
 test <- Vs_all_true_HF %>% 
   gather(key = "Chosen_Index", value = "Model", - Rep) %>% 
@@ -328,8 +332,3 @@ ggw <- test %>%
   ) +
   theme_minimal() 
 ggw
-
-NWHF3 <- NWHFf %>% 
-  add_column(TrueModel = "Network")
-NWBF3 <- NWHFf %>% 
-  add_column(TrueModel = "Network")
