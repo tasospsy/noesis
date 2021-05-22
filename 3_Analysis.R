@@ -1,7 +1,7 @@
 ## Internship project
 ## Tasos Psychogyiopoulos
 ## DRAFT - ANALYSIS
-## c.17/02/2021 / m.04/04/2021
+## c.17/02/2021 / m.22/05/2021
 
 # ---- required sources
 source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/1_Preparation.R"))
@@ -23,6 +23,7 @@ indices <- c('chisq', 'pvalue', 'rmsea', 'tli', 'cfi','nfi', 'bic','aic.ll')
 ## Set Graphics parameter 3x3
 par(mfrow=c(3,3))
 sapply(indices, histfun) %>% invisible
+par(mfrow=c(1,1))
 
 # Test: Do fit Indices pick the right model?
 ## For 'TableL' function see, 'background_Funcions.R'
@@ -46,16 +47,15 @@ sapply(indices, histfun) %>% invisible
 # Model Comparison HF Vs BF
 # ABSOLUTE FIT: 
 Dchisq <- lapply(hoi, sapply, function(.) .[['chisq']]) %>%
-  lapply(., function(.).[ ,1] - .[,2]) %>%
-  lapply(., median)
+  lapply(., function(.).[ ,1] - .[,2]) 
 Ddf   <- lapply(hoi, sapply, function(.) .[['df']]) %>%
-  lapply(., function(.).[ ,1] - .[,2]) %>%
-  lapply(., median)
+  lapply(., function(.).[ ,1] - .[,2]) 
 
+# I need p.value of Chisq_diff!!
 
 # VISUALIZATION (see. part 4. Visualization)
 
-         ## Old code
+## Old code
 # Draw the boxplot and the histogram 
 ## HistBox <- function(index, truemodel = c('trueHF', 'trueBF', 'trueNW'),
 ##                     fit = c('fitHF', 'fitBF', 'fitNW')) {
@@ -68,6 +68,6 @@ Ddf   <- lapply(hoi, sapply, function(.) .[['df']]) %>%
 ## par(mfcol = c(4,3), mar=c(4, 3.1, 1.1, 2.1))
 ## sapply(indices[1:6], HistBox, truemodel = 'trueBF', fit = 'fitBF') %>% invisible
 ## sapply(indices[1:6], HistBox, truemodel = 'trueNW', fit = 'fitBF') %>% invisible
-
+## ar(mfcol = c(1,1), mar=c(0,0,0,0))
 # graphics.off()
 
