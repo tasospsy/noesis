@@ -78,6 +78,7 @@ alldat <-  bind_rows(data1, data2, data3) %>%
 
 # 1st plot: FITTING BI-FACTOR MODELS
 
+## Version. 1: All fit measures together
 ## Distribution Comparison Plot
 
 ggcomp <- alldat %>% filter(FitModel == "Bi-factor") %>%  
@@ -101,8 +102,8 @@ ggcomp <- alldat %>% filter(FitModel == "Bi-factor") %>%
           legend.title = element_text(face = "bold"),
           strip.text = element_text(colour = "grey15", size = 12),
           legend.position = "bottom") +
-    scale_fill_manual(values= c("coral","chartreuse4","gold"),
-                    aesthetics = c("color", "fill"))
+    scale_fill_manual(values= c("coral","chartreuse3","turquoise3"),
+                      aesthetics = c("color", "fill"))
 ggcomp
 
 ## # Grey theme
@@ -118,6 +119,58 @@ ggcomp
 ##       legend.position = "bottom") +
 ##   scale_fill_manual(values= c("coral","aquamarine","lightyellow1"),
 ##                     aesthetics = c("color", "fill"))
+
+## Version. 2: separately exact and approx. fit measures
+ex.plot <- alldat %>% filter(FitModel == "Bi-factor") %>%  
+  dplyr::select(TrueModel, p.value, Chi.squared) %>% 
+  gather(key = "Index", value = "value", -TrueModel) %>% 
+  ggplot() + 
+  geom_histogram(aes(x = value, color = TrueModel, fill = TrueModel),
+                 bins = 50, alpha = .4, show.legend = FALSE) +
+  facet_wrap(~Index, scales = 'free', nrow = 1) +
+  ggtitle(label = "Fitting Bi-factor Models",
+          subtitle = "Exact Fit Measures") +
+  xlab("") +
+  ylab("") +
+  theme_minimal(base_size = 15) +
+  theme(text = element_text(family = "mono", color = "grey15"),
+        plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
+        plot.subtitle = element_text(hjust = 0.5, size = 14),
+        panel.grid.major.x = element_line(size = 0.4),
+        panel.grid.major.y = element_line(size = 0.4),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        strip.text = element_text(colour = "grey15", size = 11)) +
+  scale_fill_manual(values= c("coral","chartreuse3","turquoise3"),
+                    aesthetics = c("color", "fill"))
+ex.plot
+
+approx.plot <- alldat %>% filter(FitModel == "Bi-factor") %>%  
+  dplyr::select(TrueModel, RMSEA, CFI, TLI, NFI) %>% 
+  gather(key = "Index", value = "value", -TrueModel) %>% 
+  ggplot() + 
+  geom_histogram(aes(x = value, color = TrueModel, fill = TrueModel),
+                 bins = 50, alpha = .4, show.legend = TRUE) +
+  facet_wrap(~Index, scales = 'free', nrow = 2) +
+  ggtitle(label = "",
+          subtitle = "Approximate Fit Indices") +
+  xlab("") +
+  ylab("") +
+  theme_minimal(base_size = 15) +
+  theme(text = element_text(family = "mono", color = "grey15"),
+        plot.subtitle = element_text(hjust = 0.5, size = 14),
+        panel.grid.major.x = element_line(size = 0.4),
+        panel.grid.major.y = element_line(size = 0.4),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        strip.text = element_text(colour = "grey15", size = 11),
+        legend.position = "bottom") +
+  scale_fill_manual(values= c("coral","chartreuse3","turquoise3"),
+                    aesthetics = c("color", "fill"))
+approx.plot
+
+ggcomp.v2 <- ex.plot / approx.plot
+ggcomp.v2
 
 # Cucina et al 2017 data
 Cucina <- tibble(CFI = c(.975, .977, .975, .967, .989, .979, .990),
@@ -159,17 +212,18 @@ count_all_true_HF <- all_true_HF %>%
 
 pie1 <- count_all_true_HF %>% 
   ggplot(aes(x=per, y=Chosen_Index, fill= Chosen_Index)) +
-  geom_bar(width = 1, stat = "identity", color="white", show.legend = FALSE) +
+  geom_bar(width = 0.8, stat = "identity", color="white", show.legend = FALSE, alpha = 1) +
   coord_polar("x", start=0) +
-  geom_text(aes(label = paste0(Chosen_Index,":", per,  "%")), 
-            color = "grey15",size=3, family = "mono", hjust = 1) +
+  geom_label(aes(label = paste0(Chosen_Index," ", per,  "%")), 
+             color = "grey15", size=3.5, family = "mono", hjust = 0.5, 
+             show.legend = FALSE, alpha = 0.8) +
   theme_void() +
-  scale_fill_brewer(palette = "Greens") +
+  scale_fill_brewer(palette = "YlGn") +
   labs(title = "",
        subtitle = "A. When the true model is \n Higher-Order Factor Model",
        caption = "") +
   theme(text = element_text(family = "mono"),
-        plot.subtitle = element_text(hjust = 0.5, color = "darkgreen", size = 12)
+        plot.subtitle = element_text(hjust = 0.5, color = "darkgreen", size = 13)
   )
 pie1
 
@@ -196,17 +250,18 @@ count_all_true_BF <- all_true_BF %>%
 
 pie2 <- count_all_true_BF %>% 
   ggplot(aes(x=per, y=Chosen_Index, fill= Chosen_Index)) +
-  geom_bar(width = 1, stat = "identity", color="white", show.legend = FALSE) +
+  geom_bar(width = 0.8, stat = "identity", color="white", show.legend = FALSE, alpha = 1) +
   coord_polar("x", start=0) +
-  geom_text(aes(label = paste0(Chosen_Index,":", per,  "%")), 
-            color = "grey15",size=3, family = "mono", hjust = 1) +
+  geom_label(aes(label = paste0(Chosen_Index," ", per,  "%")), 
+             color = "grey15", size=3.5, family = "mono", hjust = 0, 
+             show.legend = FALSE, alpha = 0.8) +
   theme_void() +
-  scale_fill_brewer(palette = "Oranges") +
+  scale_fill_brewer(palette = "YlOrRd") +
   labs(title = "",
        subtitle = "B. When the true model is \n Bi-factor Model",
        caption = "") +
   theme(text = element_text(family = "mono"),
-        plot.subtitle = element_text(hjust = 0.5, color = "darkorange2", size = 12)
+        plot.subtitle = element_text(hjust = 0.5, color = "darkorange2", size = 13)
   )
 pie2
 
@@ -235,18 +290,20 @@ count_all_true_NW <- all_true_NW %>%
 
 pie3 <- count_all_true_NW %>% 
   ggplot(aes(x=per, y=Chosen_Index, fill= Chosen_Index)) +
-  geom_bar(width = 1, stat = "identity", color="white", show.legend = FALSE) +
+  geom_bar(width = 0.8, stat = "identity", color="white", 
+           show.legend = FALSE, alpha = 1) +
   coord_polar("x", start=0) +
-  geom_text(aes(label = paste0(Chosen_Index,":", per,  "%")), 
-            color = "grey15", size=3, family = "mono", hjust = 1) +
+  geom_label(aes(label = paste0(Chosen_Index," ", per,  "%")), 
+             color = "grey15", size=3.5, family = "mono", hjust = 0, 
+             show.legend = FALSE, alpha = 0.8) +
   theme_void() +
-  scale_fill_brewer(palette = "Blues") +
+  scale_fill_brewer(palette = "GnBu") +
   labs(title = "",
        subtitle = "C. When the true model is \n Network Model",
        caption = "") +
   theme(text = element_text(family = "mono"),
-        plot.subtitle = element_text(hjust = 0.5, color = "blue4", size = 12)
-  )
+        plot.subtitle = element_text(hjust = 0.5, color = "turquoise3", size = 13)
+  ) 
 pie3
 
 ## Final Plot with all 3 pies
