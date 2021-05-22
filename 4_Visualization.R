@@ -1,7 +1,8 @@
 ## Internship project
 ## Tasos Psychogyiopoulos
 ## 4. VISUALIZATION (draft)
-## c. 10/5/2021
+## c. 10/5/2021 / m. 22/5/2021
+
 source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/3_Analysis.R"))
 library(tidyverse)
 
@@ -43,7 +44,6 @@ NWBF <-  hoi$trueNW$fitBF %>% as_tibble() %>%
 NWNW <-  hoi$trueNW$fitNW %>% as_tibble() %>% 
   dplyr::select(all_of(fitmeasures))
 
-
 # 1st plot: FITTING BI-FACTOR MODELS
 
 ## TRUE BF - FIT BF
@@ -52,7 +52,6 @@ BFBF1 <-  BFBF %>%
   rename(χ2 = chisq, RMSEA = rmsea, CFI = cfi, p_value = pvalue,
          TLI = tli, NFI = nfi)
 
-# Calculating summary statistics to put them on plots
 SumBFBF <- BFBF1 %>% 
   dplyr::select(RMSEA, CFI, TLI, NFI) %>% 
   gather() %>% 
@@ -60,7 +59,7 @@ SumBFBF <- BFBF1 %>%
   summarize(medianBFBF = median(value), meanBFBF = mean(value)) %>% 
   mutate(lab = paste("median = ", round(medianBFBF,4), "\nmean =", round(meanBFBF,4))
          )
-# Histogram Plot - TrueBF/FitBF
+
 BFBF_hists <- BFBF1 %>% gather() %>% 
   ggplot(aes(x= value)) + 
   geom_histogram(bins = 15, show.legend = FALSE, fill = "coral", color = "white", alpha = 0.8) + 
@@ -78,7 +77,6 @@ NWBF1 <-  NWBF %>%
   dplyr::select(chisq, rmsea, cfi, pvalue, tli, nfi) %>% 
   rename(χ2 = chisq, RMSEA = rmsea, CFI = cfi, p_value = pvalue,
          TLI = tli, NFI = nfi)
-# Summary statistics
 SumNWBF <- NWBF1 %>% 
   dplyr::select(RMSEA, CFI, TLI, NFI) %>% 
   gather() %>% 
@@ -87,8 +85,6 @@ SumNWBF <- NWBF1 %>%
   mutate(lab = paste("median = ", round(medianNWBF,4), 
                      "\nmean =", round(meanNWBF,4))
          )
-
-# Histogram Plot - TrueNW/FitBF
 NWBF_hists <- NWBF1 %>% gather() %>% 
   ggplot(aes(x= value)) + 
   geom_histogram(bins = 15, show.legend = FALSE, color = "white", fill = "deepskyblue", alpha = 0.6) + 
@@ -101,29 +97,53 @@ NWBF_hists <- NWBF1 %>% gather() %>%
   theme_minimal()
 NWBF_hists
 
-## Comparison Plot
+## Distribution Comparison Plot
 
 BFBFt <- BFBF %>% add_column(TrueModel = "Bi-factor")
 NWBFt <- NWBF %>% add_column(TrueModel = "Network")
 HFBFt <- HFBF %>% add_column(TrueModel = "Higher-order factor")
 
 comp <- bind_rows(BFBFt, NWBFt, HFBFt) %>% 
-  rename(χ2 = chisq, RMSEA = rmsea, CFI = cfi, p_value = pvalue,
+  rename(Chi.squared = chisq, RMSEA = rmsea, CFI = cfi, p.value = pvalue,
          TLI = tli, NFI = nfi) %>% 
-  dplyr::select(TrueModel, RMSEA, TLI, CFI, NFI, p_value, χ2) %>% 
+  dplyr::select(TrueModel, RMSEA, TLI, CFI, NFI, p.value, Chi.squared) %>% 
   gather(key = "Index", value = "value", -TrueModel)
 
 ggcomp <- ggplot(comp) + 
-  geom_histogram(aes(x = value, color = TrueModel,fill = TrueModel),
-                 bins = 70, alpha = .2) +
-  facet_wrap(~Index, scales = 'free')+
-  ggtitle("Fitting Bi-factor Models")+
-  xlab("Fit Indices Comparison") +
+  geom_histogram(aes(x = value, color = TrueModel, fill = TrueModel),
+                 bins = 50, alpha = .3) +
+  facet_wrap(~Index, scales = 'free') +
+    ggtitle(label = "Fitting Bi-factor Models",
+          subtitle = "Fit Measures Comparison") +
+  xlab("") +
   ylab("") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
+  theme_minimal(base_size = 15) +
+  theme(text = element_text(family = "mono", color = "grey15"),
+        plot.title = element_text(face = "bold", size = 20),
+        panel.grid.major.x = element_line(size = 0.4),
+        panel.grid.major.y = element_line(size = 0.4),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        legend.title = element_text(face = "bold"),
+        strip.text = element_text(colour = "grey15", size = 12),
+        legend.position = "bottom") +
+  scale_fill_manual(values= c("coral","chartreuse4","gold"),
+                    aesthetics = c("color", "fill"))
 ggcomp
 
+## # Grey theme
+## theme(text = element_text(family = "mono", color = "grey90"),
+##       plot.background = element_rect(fill = "grey15", color = NA),
+##       plot.title = element_text(face = "bold", size = 20),
+##       panel.grid.major.x = element_line(size = 0.1),
+##       panel.grid.major.y = element_line(size = 0.1),
+##       panel.grid.minor.x = element_blank(),
+##       panel.grid.minor.y = element_blank(),
+##       legend.title = element_text(face = "bold"),
+##       strip.text = element_text(colour = "grey80", size = 12),
+##       legend.position = "bottom") +
+##   scale_fill_manual(values= c("coral","aquamarine","lightyellow1"),
+##                     aesthetics = c("color", "fill"))
 
 # Cucina et al 2017 data
 Cucina <- tibble(CFI = c(.975, .977, .975, .967, .989, .979, .990),
@@ -340,7 +360,3 @@ NWHF3 <- NWHFf %>%
   add_column(TrueModel = "Network")
 NWBF3 <- NWHFf %>% 
   add_column(TrueModel = "Network")
-
-
-
-
