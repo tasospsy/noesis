@@ -9,125 +9,98 @@ library(tidyverse)
 ## setwd("/Users/tasospsy/Google Drive/_UvA/Research Internship/Noesis/")
 ## load('out.rda')
 
-## "Tidy" the simulation results
+## TIDY UP' THE SIMULATION RESULTS
 
 # Selected fit measures for this study
-fitmeasures <- c("chisq", "df", "pvalue", "rmsea", "aic.ll", "bic", "cfi", "tli", "nfi")
+exact.fit   <-  c("chisq", "df", "pvalue")
+approx.fit  <-  c("rmsea", "cfi", "tli", "nfi")
+comp.criteria    <-  c("aic.ll", "bic")
 
 ## TRUE HF - FIT HF
 HFHF <-  hoi$trueHF$fitHF %>% as_tibble() %>% 
-  dplyr::select(all_of(fitmeasures))
+  add_column(FitModel = "Higher-order factor") %>% 
+  rownames_to_column("_Rep")
 ## TRUE HF - FIT BF
 HFBF <-  hoi$trueHF$fitBF %>% as_tibble() %>% 
-  dplyr::select(all_of(fitmeasures))  
+  add_column(FitModel = "Bi-factor") %>% 
+  rownames_to_column("_Rep")
 ## TRUE HF - FIT NW
-HFNW <-  hoi$trueHF$fitNW %>% as_tibble() %>% 
-  dplyr::select(all_of(fitmeasures)) 
+HFNW <-  hoi$trueHF$fitNW %>% as_tibble()%>% 
+  add_column(FitModel = "Network")%>% 
+  rownames_to_column("_Rep")
+## merge
+data1 <- bind_rows(HFHF, HFBF, HFNW) %>% 
+  dplyr::select(all_of(c(exact.fit, approx.fit, comp.criteria)),
+                FitModel, `_Rep`) %>% 
+  add_column(TrueModel = "Higher-order factor") 
 
 ## TRUE BF - FIT HF
 BFHF <-  hoi$trueBF$fitHF %>% as_tibble() %>% 
-  dplyr::select(all_of(fitmeasures))
+  add_column(FitModel = "Higher-order factor") %>% 
+  rownames_to_column("_Rep")
 ## TRUE BF - FIT BF
 BFBF <-  hoi$trueBF$fitBF %>% as_tibble() %>% 
-  dplyr::select(all_of(fitmeasures))  
+  add_column(FitModel = "Bi-factor") %>% 
+  rownames_to_column("_Rep")
 ## TRUE BF - FIT NW
-BFNW <-  hoi$trueBF$fitNW %>% as_tibble() %>% 
-  dplyr::select(all_of(fitmeasures))
+BFNW <-  hoi$trueBF$fitNW %>% as_tibble()%>% 
+  add_column(FitModel = "Network") %>% 
+  rownames_to_column("_Rep")
+## merge
+data2 <- bind_rows(BFHF, BFBF, BFNW) %>% 
+  dplyr::select(all_of(c(exact.fit, approx.fit, comp.criteria)),
+                FitModel, `_Rep`) %>% 
+  add_column(TrueModel = "Bi-factor") 
 
 ## TRUE NW - FIT HF
 NWHF <-  hoi$trueNW$fitHF %>% as_tibble() %>% 
-  dplyr::select(all_of(fitmeasures))
+  add_column(FitModel = "Higher-order factor") %>% 
+  rownames_to_column("_Rep")
 ## TRUE NW - FIT BF
 NWBF <-  hoi$trueNW$fitBF %>% as_tibble() %>% 
-  dplyr::select(all_of(fitmeasures))  
+  add_column(FitModel = "Bi-factor") %>% 
+  rownames_to_column("_Rep")
 ## TRUE NW - FIT NW
-NWNW <-  hoi$trueNW$fitNW %>% as_tibble() %>% 
-  dplyr::select(all_of(fitmeasures))
+NWNW <-  hoi$trueNW$fitNW %>% as_tibble()%>% 
+  add_column(FitModel = "Network") %>% 
+  rownames_to_column("_Rep")
+## merge
+data3 <- bind_rows(NWHF, NWBF, NWNW) %>% 
+  dplyr::select(all_of(c(exact.fit, approx.fit, comp.criteria)),
+                FitModel, `_Rep`) %>% 
+  add_column(TrueModel = "Network") 
+
+# merge all datasets
+alldat <-  bind_rows(data1, data2, data3) %>% 
+  rename(Chi.squared = chisq, RMSEA = rmsea, CFI = cfi, p.value = pvalue,
+         TLI = tli, NFI = nfi, AIC = aic.ll, BIC = bic)
 
 # 1st plot: FITTING BI-FACTOR MODELS
 
-## TRUE BF - FIT BF
-BFBF1 <-  BFBF %>% 
-  dplyr::select(chisq, rmsea, cfi, pvalue, tli, nfi) %>% 
-  rename(χ2 = chisq, RMSEA = rmsea, CFI = cfi, p_value = pvalue,
-         TLI = tli, NFI = nfi)
-
-SumBFBF <- BFBF1 %>% 
-  dplyr::select(RMSEA, CFI, TLI, NFI) %>% 
-  gather() %>% 
-  group_by(key) %>% 
-  summarize(medianBFBF = median(value), meanBFBF = mean(value)) %>% 
-  mutate(lab = paste("median = ", round(medianBFBF,4), "\nmean =", round(meanBFBF,4))
-         )
-
-BFBF_hists <- BFBF1 %>% gather() %>% 
-  ggplot(aes(x= value)) + 
-  geom_histogram(bins = 15, show.legend = FALSE, fill = "coral", color = "white", alpha = 0.8) + 
-  facet_wrap(~key, scales = 'free', ncol = 3)+
-  geom_text(data = SumBFBF, aes(label = lab), 
-            x=Inf, y=Inf, hjust=1, vjust=1, size=3) +
-  ggtitle("True model Bi-factor Model - Fitting Bi-factor Model")+
-  xlab("Fit Indices")+
-  ylab("") +
-  theme_minimal()
-BFBF_hists
-
-## TRUE NW - FIT BF
-NWBF1 <-  NWBF %>% 
-  dplyr::select(chisq, rmsea, cfi, pvalue, tli, nfi) %>% 
-  rename(χ2 = chisq, RMSEA = rmsea, CFI = cfi, p_value = pvalue,
-         TLI = tli, NFI = nfi)
-SumNWBF <- NWBF1 %>% 
-  dplyr::select(RMSEA, CFI, TLI, NFI) %>% 
-  gather() %>% 
-  group_by(key) %>% 
-  summarize(medianNWBF = median(value), meanNWBF = mean(value)) %>% 
-  mutate(lab = paste("median = ", round(medianNWBF,4), 
-                     "\nmean =", round(meanNWBF,4))
-         )
-NWBF_hists <- NWBF1 %>% gather() %>% 
-  ggplot(aes(x= value)) + 
-  geom_histogram(bins = 15, show.legend = FALSE, color = "white", fill = "deepskyblue", alpha = 0.6) + 
-  facet_wrap(~key, scales = 'free', ncol = 3) +
-  geom_text(data = SumNWBF, aes(label = lab), 
-            x=Inf, y=Inf, hjust=1, vjust=1, size=3) +
-  ggtitle("True model Network Model - Fitting Bi-factor Model")+
-  xlab("Fit Indices") +
-  ylab("") +
-  theme_minimal()
-NWBF_hists
-
 ## Distribution Comparison Plot
 
-BFBFt <- BFBF %>% add_column(TrueModel = "Bi-factor")
-NWBFt <- NWBF %>% add_column(TrueModel = "Network")
-HFBFt <- HFBF %>% add_column(TrueModel = "Higher-order factor")
-
-comp <- bind_rows(BFBFt, NWBFt, HFBFt) %>% 
-  rename(Chi.squared = chisq, RMSEA = rmsea, CFI = cfi, p.value = pvalue,
-         TLI = tli, NFI = nfi) %>% 
-  dplyr::select(TrueModel, RMSEA, TLI, CFI, NFI, p.value, Chi.squared) %>% 
-  gather(key = "Index", value = "value", -TrueModel)
-
-ggcomp <- ggplot(comp) + 
-  geom_histogram(aes(x = value, color = TrueModel, fill = TrueModel),
-                 bins = 50, alpha = .3) +
-  facet_wrap(~Index, scales = 'free') +
-    ggtitle(label = "Fitting Bi-factor Models",
-          subtitle = "Fit Measures Comparison") +
-  xlab("") +
-  ylab("") +
-  theme_minimal(base_size = 15) +
-  theme(text = element_text(family = "mono", color = "grey15"),
-        plot.title = element_text(face = "bold", size = 20),
-        panel.grid.major.x = element_line(size = 0.4),
-        panel.grid.major.y = element_line(size = 0.4),
-        panel.grid.minor.x = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        legend.title = element_text(face = "bold"),
-        strip.text = element_text(colour = "grey15", size = 12),
-        legend.position = "bottom") +
-  scale_fill_manual(values= c("coral","chartreuse4","gold"),
+ggcomp <- alldat %>% filter(FitModel == "Bi-factor") %>%  
+    dplyr::select(TrueModel, RMSEA, TLI, CFI, NFI, p.value, Chi.squared) %>% 
+    gather(key = "Index", value = "value", -TrueModel) %>% 
+    ggplot() + 
+    geom_histogram(aes(x = value, color = TrueModel, fill = TrueModel),
+                   bins = 50, alpha = .3) +
+    facet_wrap(~Index, scales = 'free') +
+      ggtitle(label = "Fitting Bi-factor Models",
+            subtitle = "Fit Measures Comparison") +
+    xlab("") +
+    ylab("") +
+    theme_minimal(base_size = 15) +
+    theme(text = element_text(family = "mono", color = "grey15"),
+          plot.title = element_text(face = "bold", size = 20),
+          panel.grid.major.x = element_line(size = 0.4),
+          panel.grid.major.y = element_line(size = 0.4),
+          panel.grid.minor.x = element_blank(),
+          panel.grid.minor.y = element_blank(),
+          legend.title = element_text(face = "bold"),
+          strip.text = element_text(colour = "grey15", size = 12),
+          legend.position = "bottom") +
+    scale_fill_manual(values= c("coral","chartreuse4","gold"),
                     aesthetics = c("color", "fill"))
 ggcomp
 
