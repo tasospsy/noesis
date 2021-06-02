@@ -1,124 +1,12 @@
 ## Internship project
 ## Tasos Psychogyiopoulos
 ## 4. VISUALIZATION (draft)
-## c. 10/5/2021 / m. 22/5/2021
+## c. 10/5/2021 / m.01/06/2021
 
 source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/3_Analysis.R"))
-library(tidyverse)
 library(patchwork)
 
-## setwd("/Users/tasospsy/Google Drive/_UvA/Research Internship/Noesis/")
-## load('out.rda')
-
-## TIDY UP' THE SIMULATION RESULTS
-
-# Selected fit measures for this study
-exact.fit   <-  c("chisq", "df", "pvalue")
-approx.fit  <-  c("rmsea", "cfi", "tli", "nfi")
-comp.criteria    <-  c("aic.ll", "bic")
-
-## TRUE HF - FIT HF
-HFHF <-  hoi$trueHF$fitHF %>% as_tibble() %>% 
-  add_column(FitModel = "Higher-order factor") %>% 
-  rownames_to_column("Rep")
-## TRUE HF - FIT BF
-HFBF <-  hoi$trueHF$fitBF %>% as_tibble() %>% 
-  add_column(FitModel = "Bi-factor") %>% 
-  rownames_to_column("Rep")
-## TRUE HF - FIT NW
-HFNW <-  hoi$trueHF$fitNW %>% as_tibble()%>% 
-  add_column(FitModel = "Network")%>% 
-  rownames_to_column("Rep")
-## merge
-data1 <- bind_rows(HFHF, HFBF, HFNW) %>% 
-  dplyr::select(all_of(c(exact.fit, approx.fit, comp.criteria)),
-                FitModel, Rep) %>% 
-  add_column(TrueModel = "Higher-order factor") 
-
-## TRUE BF - FIT HF
-BFHF <-  hoi$trueBF$fitHF %>% as_tibble() %>% 
-  add_column(FitModel = "Higher-order factor") %>% 
-  rownames_to_column("Rep")
-## TRUE BF - FIT BF
-BFBF <-  hoi$trueBF$fitBF %>% as_tibble() %>% 
-  add_column(FitModel = "Bi-factor") %>% 
-  rownames_to_column("Rep")
-## TRUE BF - FIT NW
-BFNW <-  hoi$trueBF$fitNW %>% as_tibble()%>% 
-  add_column(FitModel = "Network") %>% 
-  rownames_to_column("Rep")
-## merge
-data2 <- bind_rows(BFHF, BFBF, BFNW) %>% 
-  dplyr::select(all_of(c(exact.fit, approx.fit, comp.criteria)),
-                FitModel, Rep) %>% 
-  add_column(TrueModel = "Bi-factor") 
-
-## TRUE NW - FIT HF
-NWHF <-  hoi$trueNW$fitHF %>% as_tibble() %>% 
-  add_column(FitModel = "Higher-order factor") %>% 
-  rownames_to_column("Rep")
-## TRUE NW - FIT BF
-NWBF <-  hoi$trueNW$fitBF %>% as_tibble() %>% 
-  add_column(FitModel = "Bi-factor") %>% 
-  rownames_to_column("Rep")
-## TRUE NW - FIT NW
-NWNW <-  hoi$trueNW$fitNW %>% as_tibble()%>% 
-  add_column(FitModel = "Network") %>% 
-  rownames_to_column("Rep")
-## merge
-data3 <- bind_rows(NWHF, NWBF, NWNW) %>% 
-  dplyr::select(all_of(c(exact.fit, approx.fit, comp.criteria)),
-                FitModel, Rep) %>% 
-  add_column(TrueModel = "Network") 
-
-# merge all datasets
-alldat <-  bind_rows(data1, data2, data3) %>% 
-  rename(Chi.squared = chisq, RMSEA = rmsea, CFI = cfi, p.value = pvalue,
-         TLI = tli, NFI = nfi, AIC = aic.ll, BIC = bic)
-
 # 1st plot: FITTING BI-FACTOR MODELS
-
-## Version. 1: All fit measures together
-## Distribution Comparison Plot
-
-ggcomp <- alldat %>% filter(FitModel == "Bi-factor") %>%  
-    dplyr::select(TrueModel, RMSEA, TLI, CFI, NFI, p.value, Chi.squared) %>% 
-    gather(key = "Index", value = "value", -TrueModel) %>% 
-    ggplot() + 
-    geom_histogram(aes(x = value, color = TrueModel, fill = TrueModel),
-                   bins = 50, alpha = .3) +
-    facet_wrap(~Index, scales = 'free') +
-      ggtitle(label = "Fitting Bi-factor Models",
-            subtitle = "Fit Measures Comparison") +
-    xlab("") +
-    ylab("") +
-    theme_minimal(base_size = 15) +
-    theme(text = element_text(family = "mono", color = "grey15"),
-          plot.title = element_text(face = "bold", size = 20),
-          panel.grid.major.x = element_line(size = 0.4),
-          panel.grid.major.y = element_line(size = 0.4),
-          panel.grid.minor.x = element_blank(),
-          panel.grid.minor.y = element_blank(),
-          legend.title = element_text(face = "bold"),
-          strip.text = element_text(colour = "grey15", size = 12),
-          legend.position = "bottom") +
-    scale_fill_manual(values= c("coral","chartreuse3","turquoise3"),
-                      aesthetics = c("color", "fill"))
-ggcomp
-
-## # Grey theme
-## theme(text = element_text(family = "mono", color = "grey90"),
-##       plot.background = element_rect(fill = "grey15", color = NA),
-##       plot.title = element_text(face = "bold", size = 20),
-##       panel.grid.major.x = element_line(size = 0.1),
-##       panel.grid.major.y = element_line(size = 0.1),
-##       panel.grid.minor.x = element_blank(),
-##       panel.grid.minor.y = element_blank(),
-##       legend.title = element_text(face = "bold"),
-##       strip.text = element_text(colour = "grey80", size = 12),
-##       legend.position = "bottom") +
-##   scale_fill_manual(values= c("coral","aquamarine","lightyellow1"),
-##                     aesthetics = c("color", "fill"))
 
 ## Version. 2: separately exact and approx. fit measures
 ex.plot <- alldat %>% filter(FitModel == "Bi-factor") %>%  
@@ -126,31 +14,38 @@ ex.plot <- alldat %>% filter(FitModel == "Bi-factor") %>%
   gather(key = "Index", value = "value", -TrueModel) %>% 
   ggplot() + 
   geom_histogram(aes(x = value, color = TrueModel, fill = TrueModel),
-                 bins = 50, alpha = .4, show.legend = FALSE) +
-  facet_wrap(~Index, scales = 'free', nrow = 1) +
+                 bins = 40, alpha = .2, show.legend = TRUE, position = "identity") +
+  facet_wrap(~Index, scales = 'free', nrow = 2) +
   ggtitle(label = "Fitting Bi-factor Models",
           subtitle = "Exact Fit Measures") +
   xlab("") +
   ylab("") +
   theme_minimal(base_size = 15) +
   theme(text = element_text(family = "mono", color = "grey15"),
-        plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),
+        plot.title = element_text(hjust = 0, size = 16, face = "bold"),
         plot.subtitle = element_text(hjust = 0.5, size = 14),
         panel.grid.major.x = element_line(size = 0.4),
         panel.grid.major.y = element_line(size = 0.4),
         panel.grid.minor.x = element_blank(),
         panel.grid.minor.y = element_blank(),
-        strip.text = element_text(colour = "grey15", size = 11)) +
+        strip.text = element_text(colour = "grey15", size = 11),
+        legend.position = "bottom") +
   scale_fill_manual(values= c("coral","chartreuse3","turquoise3"),
                     aesthetics = c("color", "fill"))
 ex.plot
 
-approx.plot <- alldat %>% filter(FitModel == "Bi-factor") %>%  
+
+approx.plot <- alldat %>% 
+  filter(FitModel == "Bi-factor") %>%
+  
   dplyr::select(TrueModel, RMSEA, CFI, TLI, NFI) %>% 
   gather(key = "Index", value = "value", -TrueModel) %>% 
   ggplot() + 
-  geom_histogram(aes(x = value, color = TrueModel, fill = TrueModel),
-                 bins = 50, alpha = .4, show.legend = TRUE) +
+  geom_histogram(data = . %>% filter(!TrueModel == "Empirical"),aes(x = value, color = TrueModel, fill = TrueModel),
+                 bins = 40, alpha = .1, show.legend = FALSE, position = "identity") +
+  geom_point(data = . %>% filter(TrueModel == "Empirical"),
+             aes(x = value, y = 1, color = TrueModel, fill = TrueModel), 
+             alpha = 1, show.legend = TRUE) +
   facet_wrap(~Index, scales = 'free', nrow = 2) +
   ggtitle(label = "",
           subtitle = "Approximate Fit Indices") +
@@ -165,56 +60,29 @@ approx.plot <- alldat %>% filter(FitModel == "Bi-factor") %>%
         panel.grid.minor.y = element_blank(),
         strip.text = element_text(colour = "grey15", size = 11),
         legend.position = "bottom") +
-  scale_fill_manual(values= c("coral","chartreuse3","turquoise3"),
-                    aesthetics = c("color", "fill"))
-approx.plot
+  scale_fill_manual(values= c("coral","gold","chartreuse3","turquoise3"),
+                    aesthetics = c("color", "fill"),
+                    breaks = c("Empirical"),
+                    guide = guide_legend(title = ""))
 
-ggcomp.v2 <- ex.plot / approx.plot
+approx.plot 
+
+
+ggcomp.v2 <- ex.plot + approx.plot
 ggcomp.v2
-
-# Cucina et al 2017 data
-Cucina <- tibble(CFI = c(.975, .977, .975, .967, .989, .979, .990),
-                 TLI = c(.965, .967, .965, .954, .982, .968, .966),
-                 NFI = c(.951, .963, .954, .948, .986, .976, .983),
-                 RMSEA = c(.049, .052, .053, .063, .046, .056, .035)) 
-
-ggcuc <- gather(Cucina) %>% 
-  ggplot() +
-  geom_boxplot(aes(x = value, color = key, fill = key), alpha = .4) +
-  facet_wrap(~key, scales = 'free') +
-  theme_minimal()
-  
-ggcuc
 
 ## -- VISUALIZATION CHECK: DO FIT INDICES PICK THE RIGHT MODEL?  
 
 ## TRUE MODEL: HF
 
-all_true_HF <- alldat %>% 
-  filter(TrueModel == "Higher-order factor") %>% 
-  dplyr::select(RMSEA, CFI, TLI, NFI, AIC, BIC, Rep, FitModel) %>% 
-  group_by(Rep) %>% 
-  summarize(RMSEA = FitModel[which.min(RMSEA)],
-            AIC   = FitModel[which.min(AIC)],
-            BIC   = FitModel[which.min(BIC)],
-            TLI   = FitModel[which.max(TLI)],
-            CFI   = FitModel[which.max(CFI)],
-            NFI   = FitModel[which.max(NFI)]
-            ) %>% 
-  ungroup()
+## all_true_HF 
 
-count_all_true_HF <- all_true_HF %>% 
-  gather(key = "Chosen_Index", value = "Model", - Rep) %>% 
-  group_by(Chosen_Index) %>% 
+pie1 <- all_true_HF %>% 
   filter(Model == "Higher-order factor") %>% 
-  count(Model) %>% 
-  mutate(per = n /10) 
-
-pie1 <- count_all_true_HF %>% 
-  ggplot(aes(x=per, y=Chosen_Index, fill= Chosen_Index)) +
+  ggplot(aes(x=percent, y=Chosen_Index, fill= Chosen_Index)) +
   geom_bar(width = 0.8, stat = "identity", color="white", show.legend = FALSE, alpha = 1) +
   coord_polar("x", start=0) +
-  geom_label(aes(label = paste0(Chosen_Index," ", per,  "%")), 
+  geom_label(aes(label = paste0(Chosen_Index," ", percent,  "%")), 
              color = "grey15", size=3.5, family = "mono", hjust = 0.5, 
              show.legend = FALSE, alpha = 0.8) +
   theme_void() +
@@ -228,31 +96,14 @@ pie1 <- count_all_true_HF %>%
 pie1
 
 ## TRUE MODEL: BF
-all_true_BF <- alldat %>% 
-  filter(TrueModel == "Bi-factor") %>% 
-  dplyr::select(RMSEA, CFI, TLI, NFI, AIC, BIC, Rep, FitModel) %>% 
-  group_by(Rep) %>% 
-  summarize(RMSEA = FitModel[which.min(RMSEA)],
-            AIC   = FitModel[which.min(AIC)],
-            BIC   = FitModel[which.min(BIC)],
-            TLI   = FitModel[which.max(TLI)],
-            CFI   = FitModel[which.max(CFI)],
-            NFI   = FitModel[which.max(NFI)]
-  ) %>% 
-  ungroup()
+## all_true_BF 
 
-count_all_true_BF <- all_true_BF %>% 
-  gather(key = "Chosen_Index", value = "Model", - Rep) %>% 
-  group_by(Chosen_Index) %>% 
-  filter(Model == "Bi-factor") %>% 
-  count(Model) %>% 
-  mutate(per = n /10) 
-
-pie2 <- count_all_true_BF %>% 
-  ggplot(aes(x=per, y=Chosen_Index, fill= Chosen_Index)) +
+pie2 <- all_true_BF %>% 
+  filter(Fitting_Model == "Bi-factor") %>% 
+  ggplot(aes(x=percent, y=Chosen_Index, fill= Chosen_Index)) +
   geom_bar(width = 0.8, stat = "identity", color="white", show.legend = FALSE, alpha = 1) +
   coord_polar("x", start=0) +
-  geom_label(aes(label = paste0(Chosen_Index," ", per,  "%")), 
+  geom_label(aes(label = paste0(Chosen_Index," ", percent,  "%")), 
              color = "grey15", size=3.5, family = "mono", hjust = 0, 
              show.legend = FALSE, alpha = 0.8) +
   theme_void() +
@@ -267,33 +118,16 @@ pie2
 
 
 ## TRUE MODEL: NW
-## TRUE MODEL: BF
-all_true_NW <- alldat %>% 
-  filter(TrueModel == "Network") %>% 
-  dplyr::select(RMSEA, CFI, TLI, NFI, AIC, BIC, Rep, FitModel) %>% 
-  group_by(Rep) %>% 
-  summarize(RMSEA = FitModel[which.min(RMSEA)],
-            AIC   = FitModel[which.min(AIC)],
-            BIC   = FitModel[which.min(BIC)],
-            TLI   = FitModel[which.max(TLI)],
-            CFI   = FitModel[which.max(CFI)],
-            NFI   = FitModel[which.max(NFI)]
-  ) %>% 
-  ungroup()
 
-count_all_true_NW <- all_true_NW %>% 
-  gather(key = "Chosen_Index", value = "Model", - Rep) %>% 
-  group_by(Chosen_Index) %>% 
-  filter(Model == "Network") %>% 
-  count(Model) %>% 
-  mutate(per = n /10) 
+## all_true_NW 
 
-pie3 <- count_all_true_NW %>% 
-  ggplot(aes(x=per, y=Chosen_Index, fill= Chosen_Index)) +
+pie3 <- all_true_NW %>% 
+  filter(Fitting_Model == "Network") %>% 
+  ggplot(aes(x=percent, y=Chosen_Index, fill= Chosen_Index)) +
   geom_bar(width = 0.8, stat = "identity", color="white", 
            show.legend = FALSE, alpha = 1) +
   coord_polar("x", start=0) +
-  geom_label(aes(label = paste0(Chosen_Index," ", per,  "%")), 
+  geom_label(aes(label = paste0(Chosen_Index," ", percent,  "%")), 
              color = "grey15", size=3.5, family = "mono", hjust = 0, 
              show.legend = FALSE, alpha = 0.8) +
   theme_void() +
@@ -313,6 +147,8 @@ finalpie
 
 
 # --
+
+
 ## EXTRA PLOTS (DRAFT)
 
 ## TRUE BF - FIT BF
@@ -365,27 +201,3 @@ NWBF_hists <- NWBF1 %>% gather() %>%
   ylab("") +
   theme_minimal()
 NWBF_hists
-## WAFFLE CHARTS
-test <- Vs_all_true_HF %>% 
-  gather(key = "Chosen_Index", value = "Model", - Rep) %>% 
-  group_by(Chosen_Index) %>% 
-  count(Model) %>% 
-  mutate(per = n /10) %>% 
-  ungroup()
-
-library(waffle)
-ggw <- test %>% 
-  ggplot(aes(fill = Model, values = n)) +
-  geom_waffle(color = "white", size = 0.15, n_rows = 10, flip = TRUE) +
-  facet_wrap(~Chosen_Index, nrow = 1, strip.position = "bottom") +
-  scale_x_discrete(expand=c(0,0)) +
-  scale_fill_brewer(palette = "Set2") +
-  coord_equal() +
-  labs(
-    title = "",
-    subtitle = "",
-    x = "",
-    y = ""
-  ) +
-  theme_minimal() 
-ggw
