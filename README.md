@@ -1,9 +1,6 @@
-# noesis
-
-## Abstract
-
 ### To g, or not to g? A Network Perspective to Explain Why Bifactor Models Outperform Higher-order Factor Models for General Intelligence
- 
+
+### Abstract
 Anastasios Psychogyiopoulos, Kees Jan Kan, Debby the Hove
 
 ### BACKGROUND
