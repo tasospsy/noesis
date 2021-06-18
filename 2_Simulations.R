@@ -21,7 +21,6 @@ Rawdata <- replicate(n = 1000,                            # 1000 replications
 
 # save(Rawdata, file = "Rawdata.Rda")
 
-# Here: ...? Download 'Rawdata' from github
 ## -- Simulations
 # Let's specify the arguments to combine later with mapply function
 args <-  list(fitHF = c(HFmodel = T, BFmodel = F, NWmodel = F),
