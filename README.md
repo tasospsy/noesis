@@ -1,11 +1,25 @@
 # noesis
 
 ## Abstract
-The field of human general intelligence has produced many findings that are robust but paradoxical. In this presentation, we concentrate on the robust but paradoxical finding that bifactor models of intelligence outperform higher-order factor models of intelligence statistically, while according to the mainstream theory of intelligence (i.e., g theory) higher-order factor models are superior to bifactor models. This paradox requires either a revision of the mainstream theory, or a sound explanation of the bifactor modeling results. We here aim to provide such a theoretical explanation.
 
-Our explanation is inspired by the mutualism model of intelligence, which is a network theory of intelligence. By Monte-Carlo simulations using the R package psychonetrics, we demonstrate that if a network model of intelligence is the true underlying data mechanism, fitting a bifactor model shows (1) poor absolute fit, but (2) good approximate fit, and (3) better relative fit than the higher-order factor model, which in itself may show acceptable approximate fit, but poor absolute fit. All these results are in line with the empirical literature on bifactor models for general intelligence. We also show that, if a bifactor model were the underlying data generating mechanism, much better absolute fit measures are expected than the absolute fit measures reported in the empirical literature.
+### To g, or not to g? A Network Perspective to Explain Why Bifactor Models Outperform Higher-order Factor Models for General Intelligence
+ 
+Anastasios Psychogyiopoulos, Kees Jan Kan, Debby the Hove
 
-The results of our simulation study show that the network theory of intelligence provides a theoretical plausible explanation as to why bifactor models tend to outperform higher-order factor models for general intelligence.
+### BACKGROUND
+The field of human general intelligence has produced many findings that are robust but paradoxical. In this study, we concentrate on the paradoxical finding that bifactor models of intelligence outperform higher-order factor models of intelligence statistically, while according to the g-theory of intelligence higher-order factor models are superior to bifactor models.
+
+### AIM
+This paradox requires either a revision of the mainstream theory or a sound explanation of the bifactor modeling results. We here aim to provide such a theoretical explanation.
+ 
+### METHODS
+Our explanation is inspired by the mutualism model of intelligence, which is a network theory of intelligence. We use Wechsler Adult Intelligence Scale-IV correlation matrices to perform Monte-Carlo simulations. 
+
+### RESULTS
+We demonstrate that if a network model of intelligence is the true underlying data mechanism, fitting a bifactor model shows (1) poor absolute fit, but (2) good approximate fit, and (3) better relative fit than the higher-order factor model, which in itself may show acceptable approximate fit, but poor absolute fit. We also show that, if a bifactor model were the underlying data generating mechanism, much better absolute fit measures are expected than the absolute fit measures reported in the empirical literature.
+
+### CONCLUSION
+The results of our simulation study show that the network theory of intelligence provides a plausible theoretical explanation as to why bifactor models tend to outperform higher-order factor models for general intelligence.
 
 
 ***
