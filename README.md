@@ -1,7 +1,7 @@
 ### To g, or not to g? A Network Perspective to Explain Why Bifactor Models Outperform Higher-order Factor Models for General Intelligence
 
 ### Abstract
-Anastasios Psychogyiopoulos, Kees Jan Kan, Debby the Hove
+Anastasios Psychogyiopoulos, Kees Jan Kan, Debby ten Hove
 
 ### BACKGROUND
 The field of human general intelligence has produced many findings that are robust but paradoxical. In this study, we concentrate on the paradoxical finding that bifactor models of intelligence outperform higher-order factor models of intelligence statistically, while according to the g-theory of intelligence higher-order factor models are superior to bifactor models.
