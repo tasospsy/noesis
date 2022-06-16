@@ -3,7 +3,7 @@
 ## 14/2/2022
 
 source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/Background_Functions.R"))
-source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/1.Preparation.R"))
+source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/1_Preparation.R"))
 
 #################################
 # CLEANING AND TIDYING THE DATA # 
