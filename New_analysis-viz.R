@@ -3,11 +3,8 @@
 ## 14/2/2022
 
 source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/Background_Functions.R"))
+source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/1.Preparation.R"))
 
-library(psychonetrics)
-library(OpenMx)
-library(tidyverse)
-library(scales)
 #################################
 # CLEANING AND TIDYING THE DATA # 
 #################################
