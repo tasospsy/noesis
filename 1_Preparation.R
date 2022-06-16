@@ -7,7 +7,7 @@
 source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/Background_Functions.R"))
 
 # ---- Load Packages
-required.pckgs <- c("psychonetrics", "qgraph", "MASS", "dplyr", "GPArotation", "ucminf")
+required.pckgs <- c("psychonetrics", "qgraph", "MASS", "tidyverse", "GPArotation", "ucminf", "OpenMx", "scales", "kableExtra")
 installpackages(required.pckgs)
 
 # ---- load data 
