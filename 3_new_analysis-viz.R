@@ -12,7 +12,8 @@ source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/1_Preparation
 ##################
 # 'Psychonetrics'# 
 
-setwd('/Users/tasospsy/Google Drive/_UvA/Research Internship/Noesis/')
+## Set the working directory to load the 'out.Rdat' file that was produced by running the '2_Simulations.R' script.
+#setwd('/Users/tasospsy/Google Drive/_UvA/Research Internship/Noesis/')
 load('out.Rdata')
 
 
@@ -50,46 +51,48 @@ td_psyc <- td_hoi %>%
 
 
 ##################
+# IF APPLICABLE!
 #### 'OpenMx' ####
 
-setwd("/Users/tasospsy/Google Drive/_UvA/Research Internship/BifactorLab/Simulation_paper/Lennert_res/")
-load("FIT_nrep_1000.RData")  
-#FIT
-
-## Cleaning and tidying the results (OpenMx)
-td_mx <- FIT %>% tibble() %>% unnest_longer(c(.)) %>% 
-  rename(True = '._id', info = '.') %>% 
-  mutate(True = case_when(True == 'gdat' ~ 'HF', 
-                          True == 'bdat' ~ 'BF',
-                          True == 'nwdat' ~ 'NW')) %>% 
-  unnest_longer(info) %>% rename(Fit = 'info_id') %>% 
-  group_by(Fit, True) %>% 
-    mutate(stat = names(FIT)) %>% 
-  pivot_wider(names_from = 'stat', values_from = 'info') %>% 
-  unnest(c(-Fit,-True)) %>% 
-  add_column(Rep = rep(1:(nrow(.)/(n_distinct(.$Fit)*n_distinct(.$True))),# 1:9000/3*3
-                                             (n_distinct(.$Fit)*n_distinct(.$True)) # 3*3
-  )) %>% 
-  relocate(Rep, True, Fit) 
-
-td_mx <- td_mx %>%  
-  rename(chisq = 'Chi',
-         df = 'ChiDoF',
-         pvalue = 'p',
-         AIC = `AIC par`,
-         BIC = `BIC par`) %>% 
-  select(Rep, True, Fit, chisq, df, pvalue,RMSEA, CFI, TLI, AIC, BIC) %>% 
-  add_column(pckg = 'OpenMx')
-
-################################################
-##### 'Combining 'Psychonetrics' & 'openMx' ####
+## Set the working directory to load the 'FIT_nrep_1000.RData' file that was produced by running the simulations in OpenMx:
+#setwd("/Users/tasospsy/Google Drive/_UvA/Research Internship/BifactorLab/Simulation_paper/Lennert_res/")
+#load("FIT_nrep_1000.RData")  
+##FIT
 #
-td_comb <- bind_rows(td_psyc, td_mx)
-
-exact.fit   <-  c("chisq", "df", "pvalue")
-approx.fit  <-  c("RMSEA", "CFI", "TLI", "NFI")
-comp.criteria    <-  c("AIC", "BIC")
-
+### Cleaning and tidying the results (OpenMx)
+#td_mx <- FIT %>% tibble() %>% unnest_longer(c(.)) %>% 
+#  rename(True = '._id', info = '.') %>% 
+#  mutate(True = case_when(True == 'gdat' ~ 'HF', 
+#                          True == 'bdat' ~ 'BF',
+#                          True == 'nwdat' ~ 'NW')) %>% 
+#  unnest_longer(info) %>% rename(Fit = 'info_id') %>% 
+#  group_by(Fit, True) %>% 
+#    mutate(stat = names(FIT)) %>% 
+#  pivot_wider(names_from = 'stat', values_from = 'info') %>% 
+#  unnest(c(-Fit,-True)) %>% 
+#  add_column(Rep = rep(1:(nrow(.)/(n_distinct(.$Fit)*n_distinct(.$True))),# 1:9000/3*3
+#                                             (n_distinct(.$Fit)*n_distinct(.$True)) # 3*3
+#  )) %>% 
+#  relocate(Rep, True, Fit) 
+#
+#td_mx <- td_mx %>%  
+#  rename(chisq = 'Chi',
+#         df = 'ChiDoF',
+#         pvalue = 'p',
+#         AIC = `AIC par`,
+#         BIC = `BIC par`) %>% 
+#  select(Rep, True, Fit, chisq, df, pvalue,RMSEA, CFI, TLI, AIC, BIC) %>% 
+#  add_column(pckg = 'OpenMx')
+#
+#################################################
+###### 'Combining 'Psychonetrics' & 'openMx' ####
+##
+#td_comb <- bind_rows(td_psyc, td_mx)
+#
+#exact.fit   <-  c("chisq", "df", "pvalue")
+#approx.fit  <-  c("RMSEA", "CFI", "TLI", "NFI")
+#comp.criteria    <-  c("AIC", "BIC")
+#
 ########################
 ## PLOTS ##
 ########################
