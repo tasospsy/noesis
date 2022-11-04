@@ -1,14 +1,14 @@
 ## Internship project
 ## Tasos Psychogyiopoulos
 ## PREPARATION
-## c.6/12/2020 / m.20/3/2021
+## c.6/12/2020 / m.14/5/2021
+
+# ---- Load Packages
+Packages <- c("psychonetrics", "qgraph", "MASS", "dplyr", "GPArotation", "ucminf")
+invisible(lapply(Packages, library, character.only = TRUE))
 
 # ---- required sources
 source(url("https://raw.githubusercontent.com/tasospsy/noesis/main/Background_Functions.R"))
-
-# ---- Load Packages
-required.pckgs <- c("psychonetrics", "qgraph", "MASS", "tidyverse", "GPArotation", "ucminf", "OpenMx", "scales", "kableExtra", "patchwork")
-installpackages(required.pckgs)
 
 # ---- load data 
 load(url("https://github.com/tasospsy/noesis/blob/main/WAIS_US.Rdata?raw=true"))
@@ -94,9 +94,57 @@ ModelsFitFun(HFmodel = TRUE,
 ## Create a list for the 3 models
 modslist <- list(HF = hmodel, BF = BFmodel, NW = NWmodel)
 
+# Plot Network model ------------------------------------------------------
+Omega <- getmatrix(NWmodel, 'omega')
 
+library("qgraph")
+set.seed(1992)
+qgraph(Omega, 
+       labels = obsvars,
+       groups = list( V    = which( lambda.t[ , 1 ] == 1 ),
+                      PO        = which( lambda.t[ , 2 ] == 1 ),
+                      WM = which( lambda.t[ , 3 ] == 1 ),
+                      PS         = which( lambda.t[ , 4 ] == 1 )),
+       theme = "colorblind",
+       color = c('#7aafdf',
+                 '#d7ae9d',
+                 '#89cd84',
+                 '#ede164'),
+       edge.color = 'black'
+)
+##=====================
+## update from 11/5/2022
+##=====================
+library(kableExtra)
 
+## chisq dif test 
+testmods <- psychonetrics::compare(hmodel, BFmodel, NWmodel)
+# Produce a table
+kbl(testmods, 
+    caption = '',
+    booktabs = T,
+    format = 'latex', 
+    caption = "Title") %>% 
+  kable_styling() %>% 
+  footnote(general = "")
 
+## print Sigmas from confirmatory models
+Smats <- lapply(modslist, GetCorMat)
 
+# Produce three tables
+tbsS <- c()
+for(i in 1:length(Smats)) {
+tbsS[i] <- kbl(Smats[[i]] %>% round(.,2),
+    caption = paste(names(Smats)[i],'Model Implied Correlation Matrix'),
+    booktabs = TRUE, format = 'latex') %>% 
+    kable_styling(full_width = F) %>% 
+    footnote(general = "test ")
+cat(tbsS[i])
+}
 
-
+##=====================
+## update from 16/5/2022
+##=====================
+## Check for Haywood cases on BF model
+getmatrix(modslist$BF, 'sigma_epsilon') %>% 
+  apply(., 1, function(x) ifelse(x <0 , 1, 0))
