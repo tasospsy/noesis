@@ -1,17 +1,18 @@
 ## Internship project
 ## Tasos Psychogyiopoulos
 ## BACKGROUND_FUNCTIONS
-## c.17/02/2021/ m.04/04/2021
+## c.17/02/2021/ m.06/03/2023
 
 
 ## Install packages Function (from the internet)
-installpackages <- function(pkg){
+install_or_source_lib <- function(pkg){
   new.pkg <- pkg[!(pkg %in% installed.packages()[,1])]
   if (length(new.pkg))
     install.packages(new.pkg, dependencies = TRUE)
   sapply(pkg, require, character.only = TRUE)
 }
-# ___________________________________________________________
+
+# -------------------------------------------------------------------------
 
 ## 'GGM_search' Functions: Performs model search to extract
 ## a GGM Network model, given a specified sample (Kan et al, 2020) 
@@ -32,7 +33,8 @@ GGM_search <- function(dat,
   adj.matrix <<- 1*(getmatrix(NWmodel_imp, "omega")!=0)
   return(NWmodel_imp)
 }
-# ___________________________________________________________
+
+# -------------------------------------------------------------------------
 
 ## 'ModelsFitFun' Function: Fit the 3 models to our data.
 ModelsFitFun <- function (HFmodel = FALSE,
@@ -95,7 +97,9 @@ ModelsFitFun <- function (HFmodel = FALSE,
     }
   }
 }
-# ___________________________________________________________
+
+
+# -------------------------------------------------------------------------
 
 ## 'GetCorMat' Function: Gives correlation implied matrix from a psychonetrics model
 GetCorMat <- function(x){
@@ -103,8 +107,7 @@ GetCorMat <- function(x){
   dimnames(tempCor) <- list(obsvars, obsvars)
   return(tempCor)
 }
-# ___________________________________________________________
-
+# -------------------------------------------------------------------------
 
 Decomp2 <- function(output, extract = c("fitmeasures", "parameters", "modelmatrices")){
    
@@ -135,51 +138,5 @@ Decomp2 <- function(output, extract = c("fitmeasures", "parameters", "modelmatri
   }
 }
 
-# ___________________________________________________________
+# END  --------------------------------------------------------------------
 
-TableL <- function(index, 
-                   list = hoi, 
-                   Min = FALSE,
-                   truemodel = c('HF', 'BF', 'NW'),
-                   compare_models = c('HFvsBF', 'HFvsNW', 'BFvsNW', 'ALL')){
-  
-  if(truemodel == 'HF'){
-    st1 <- lapply(list, sapply, function(.) .[[index]])$trueHF
-  }
-  if(truemodel == 'BF'){
-    st1 <- lapply(list, sapply, function(.) .[[index]])$trueBF
-  }
-  if(truemodel == 'NW'){
-    st1 <- lapply(list, sapply, function(.) .[[index]])$trueNW
-  }
-  if(truemodel == 'ALL') {
-    st1 <- lapply(list, sapply, function(.) .[[index]])
-  }
-  if(truemodel == 'ALL' && compare_models == 'ALL'){
-    st2 <- sapply (st1, function(.)
-      apply(., 1, function(.)
-        ifelse(Min, which.min(.), which.max(.))) %>%
-        table)
-  } 
-  if(compare_models == 'ALL' && !compare_models =='ALL'){
-    st2 <-  apply(st1, 1, function(.)
-      ifelse(Min, which.min(.), which.max(.))) %>%
-      tabulate
-  } 
-  if(compare_models == 'HFvsBF'){
-    st2 <-  apply(st1[ ,1:2], 1, function(.)
-      ifelse(Min, which.min(.), which.max(.))) %>%
-      table
-  } 
-  if(compare_models == 'HFvsNW'){
-    st2 <-  apply(st1[ ,c(1,3)], 1, function(.)
-      ifelse(Min, which.min(.), which.max(.))) %>%
-      table
-  } 
-  if(compare_models == 'BFvsNW'){
-    st2 <-  apply(st1[ ,2:3], 1, function(.)
-      ifelse(Min, which.min(.), which.max(.))) %>%
-      table
-  } 
-  return(st2)
-}
